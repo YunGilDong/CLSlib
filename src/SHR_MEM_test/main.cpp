@@ -3,6 +3,9 @@
 //------------------------------------------------------------------------------
 #include "SharedMem.h"
 #include "CLSmemory.h"
+#include "CLSprocess.h"
+#include <sys/types.h>
+#include <unistd.h>
 //------------------------------------------------------------------------------
 // Prototype
 //------------------------------------------------------------------------------
@@ -12,32 +15,21 @@ bool InitMemory(void);
 //------------------------------------------------------------------------------
 CLSmemory	ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 SHARED_MEM	*ShmPtr = NULL;
+CLSprocess *ShmPrc = NULL;
 
-/*
-
-*/
 
 //------------------------------------------------------------------------------
-// main
+// InitEnv
 //------------------------------------------------------------------------------
-int main(void)
-{
-	char buf[1024];
-
-	printf("main start\n");
-	printf("main end\n");
-
-	if (InitMemory())
-		printf("Create Memory\n");
-	else
-		printf("Create Memory Fail\n");
-
-	scanf("%s", buf);
-
-	ShmMemory.Delete();
-	return 0;
+bool InitEnv(int argc, char **argv)
+{	
+	printf("Process start [%d]", getpid());
+	ShmPrc->Register(getpid());
+	return (true);
 }
-
+//------------------------------------------------------------------------------
+// InitMemory
+//------------------------------------------------------------------------------
 bool InitMemory(void)
 {
 	if ((ShmPtr = (SHARED_MEM *)ShmMemory.Create()) == (void *)-1)
@@ -47,10 +39,13 @@ bool InitMemory(void)
 	for (int i = 0; i<10; i++)
 		ShmPtr->shrArr[i] = i + 10;
 	ShmPtr->Terminate = true;
+	ShmPrc = &ShmPtr->process[PRC_SHMTEST];
 
 	return (true);
 }
-
+//------------------------------------------------------------------------------
+// InitMemory2
+//------------------------------------------------------------------------------
 bool InitMemory2(void)
 {
 	int m_id = 0;
@@ -77,4 +72,27 @@ bool InitMemory2(void)
 
 
 	return (true);
+}
+//------------------------------------------------------------------------------
+// main
+//------------------------------------------------------------------------------
+int main(int argc, char **argv)
+{
+	char buf[1024];
+	
+	printf("main start\n");
+	
+
+	//InitEnv(argc, argv);
+
+	if (InitMemory())
+		printf("Create Memory\n");
+	else
+		printf("Create Memory Fail\n");
+
+	scanf("%s", buf);
+
+	ShmMemory.Delete();
+	printf("main end\n");
+	return 0;
 }

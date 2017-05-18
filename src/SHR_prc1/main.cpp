@@ -35,15 +35,17 @@ int main(void)
 	{
 		printf("shrArr:%d\n", ShmPtr->shrArr[i]);
 	}
-	ShmMemory.Delete();
+	//ShmMemory.Delete();
 	return 0;
 }
 
 bool InitMemory(void)
 {
-	if ((ShmPtr = (SHARED_MEM *)ShmMemory.Create()) == (void *)-1)
-		return (false);
+	/*if ((ShmPtr = (SHARED_MEM *)ShmMemory.Create()) == (void *)-1)
+		return (false);*/
 
+	if ((ShmPtr = (SHARED_MEM *)ShmMemory.Attach()) == (void *)-1)
+		return(false);
 	return (true);
 }
 
