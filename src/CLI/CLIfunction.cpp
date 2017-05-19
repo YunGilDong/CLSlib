@@ -6,13 +6,15 @@
 // External
 //------------------------------------------------------------------------------
 extern bool	Terminate;
+extern CLI_INFO CliInfo;
 extern SHARED_MEM	*ShmPtr;
 extern CLSsystem *ShmSys;
-extern CLI_INFO CliInfo;
 extern CLScommand	CmdTable[];
 
 //------------------------------------------------------------------------------
 extern bool CheckEOT(int);
+extern bool CheckNumber(int, int, int *, char *);
+extern bool GetNumber(int, int, int *, char *);
 extern void PrnLine(char *, char, bool);
 extern void PrnError(const char *, ...);
 extern CLSprocess *GetProcess(void);
@@ -75,4 +77,15 @@ void CmdExit(void)
 		return;
 
 	Terminate = true;
+}
+//------------------------------------------------------------------------------
+// CmdTerminate
+//------------------------------------------------------------------------------
+void CmdTerminate(void)
+{
+	if (!CheckEOT(EOT_VALID))
+		return;
+
+	Terminate = true;
+	ShmPtr->system.Terminate = true;
 }

@@ -17,8 +17,8 @@
 // Process Index
 //------------------------------------------------------------------------------
 #define PRC_CLSMAIN			0
-#define PRC_SHMTEST			PRC_CLSMAIN+1
-#define MAX_PROCESS			PRC_SHMTEST+1
+#define PRC_TEST01			PRC_CLSMAIN+1
+#define MAX_PROCESS			PRC_TEST01+1
 //------------------------------------------------------------------------------
 // SHARED_MEM
 //------------------------------------------------------------------------------

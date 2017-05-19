@@ -7,13 +7,14 @@
 #include "SharedMem.h"
 #include "CLScommand.h"
 #include "CLSmemory.h"
+#include "CLSlog.h"
 #include <unistd.h>
 #include <getopt.h>
 
 //------------------------------------------------------------------------------
 // Constant
 //------------------------------------------------------------------------------
-#define MAX_CLICMD				3
+#define MAX_CLICMD				4
 #define DBG_LINE_LEN			80
 #define TOKEN_LEN				32
 //------------------------------------------------------------------------------

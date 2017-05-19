@@ -4,6 +4,7 @@
 #include "SharedMem.h"
 #include "CLSmemory.h"
 #include "CLSprocess.h"
+#include "CLSlog.h"
 #include <sys/types.h>
 #include <unistd.h>
 //------------------------------------------------------------------------------
@@ -16,7 +17,7 @@ bool InitMemory(void);
 CLSmemory	ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 SHARED_MEM	*ShmPtr = NULL;
 CLSprocess *ShmPrc = NULL;
-
+CLSlog Log("SHM_MEM", DIR_LOG);
 
 //------------------------------------------------------------------------------
 // InitEnv
@@ -24,6 +25,7 @@ CLSprocess *ShmPrc = NULL;
 bool InitEnv(int argc, char **argv)
 {	
 	printf("Process start [%d]", getpid());
+	Log.Write("Process start [%d]", getpid());
 	ShmPrc->Register(getpid());
 	return (true);
 }
@@ -32,8 +34,13 @@ bool InitEnv(int argc, char **argv)
 //------------------------------------------------------------------------------
 bool InitMemory(void)
 {
-	if ((ShmPtr = (SHARED_MEM *)ShmMemory.Create()) == (void *)-1)
-		return (false);
+	//if ((ShmPtr = (SHARED_MEM *)ShmMemory.Create()) == (void *)-1)
+	//	return (false);
+
+	if ((ShmPtr = (SHARED_MEM *)ShmMemory.Attach()) == (void *)-1)
+		return(false);
+
+	Log.Write("ShmMemory Get");
 
 	// test
 	for (int i = 0; i<10; i++)
@@ -81,18 +88,23 @@ int main(int argc, char **argv)
 	char buf[1024];
 	
 	printf("main start\n");
-	
+	Log.Write("main start");
 
-	//InitEnv(argc, argv);
+	InitEnv(argc, argv);
 
 	if (InitMemory())
 		printf("Create Memory\n");
 	else
 		printf("Create Memory Fail\n");
+	
+	while (true)
+	{
+		scanf("%s", buf);
+		ShmPrc->Pause(100);			// 100 msec
+	}
 
-	scanf("%s", buf);
-
-	ShmMemory.Delete();
+	//ShmMemory.Delete();
 	printf("main end\n");
+	Log.Write("main end");
 	return 0;
 }

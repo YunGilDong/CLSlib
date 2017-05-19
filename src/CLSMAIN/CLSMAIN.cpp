@@ -18,7 +18,7 @@ CLSprocess *ShmPrc = NULL;
 CLSmemory   ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 PRC_DESC PrcDesc[MAX_PROCESS] = { 
 				{"CLSMAIN",""},
-				{"SHM_TEST",SHM_PRC1 }
+				{"PRC_TEST01",PRC_TEST01_PROCESS }
 			};
 
 //------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ void SigHandler(int sig)
 		Log.Write("Signal %d accepted", sig);
 		Terminate = true;
 		break;
-	case SIGCHID:	//17
+	case SIGCHLD:	//17
 	case SIGUSR1:   //10
 	default:
 		Log.Write("Signal %d accepted", sig);
@@ -86,7 +86,7 @@ void ManageDebug(void)
 	if (!ShmPrc->ChangeDebug)
 		return;
 
-	ShmPrc->SetDebug(ShmPrc->ReqLevl, ShmPrc->ReqTarget);
+	ShmPrc->SetDebug(ShmPrc->ReqLevel, ShmPrc->ReqTarget);
 	Log.SetDebug(ShmPrc->ReqLevel, ShmPrc->ReqTarget);
 	ShmPrc->ChangeDebug = false;
 }
@@ -171,7 +171,82 @@ void InitOption(int argc, char **argv)
 //------------------------------------------------------------------------------
 void InitSignal(void)
 {
-	signal(SIGABRT, SigHandler);
+	signal(SIGABRT, SigHandler);	// 비정상 실행 프로세스 종료 시그널
+	signal(SIGCHLD, SIG_IGN);		// Child process stop and terminate
+	signal(SIGCLD, SigHandler);		// SIGCHID와 동의어
+	signal(SIGINT, SigHandler);		// Keyboard Interupt
+	signal(SIGKILL, SigHandler);	// kill
+	signal(SIGQUIT, SigHandler);	// Ctrl-\, QUIT신호를 보냄, 프로세스를 종료시킨 뒤 코어를 덤프하는 역할
+	signal(SIGTERM, SigHandler);	// 종료신호
+	// Deamon 작업 처리
+	setpgrp();	// Set the process group ID
+	signal(SIGHUP,  SIG_IGN);		// Hang up
+	signal(SIGTTOU, SIG_IGN);		// 백그라운드 프로세스 쓰기시도
+}
+//------------------------------------------------------------------------------
+// InitEnv
+//------------------------------------------------------------------------------
+bool InitEnv(int argc, char **argv)
+{
+	Log.Write("Process start");
 
+	InitSignal();	// 시그널 처리기 초기화
+	InitOption(argc, argv);
 
+	// 공유메모리 초기화
+	if (!InitMemory())
+	{
+		Log.Write("Shared memory initionalization fail");
+		return (false);
+	}
+
+	InitDebug();	// 디버깅 정보 초기화
+
+	// Process 초기화
+	if (!InitProcess())
+	{
+		Log.Write("Process initialization fail");
+		return (false);
+	}
+
+	ShmPrc->Register(getpid());		// Register process
+	ShmPrc->Pause(100);				// 100 msec
+	Log.Write("Initialization OK");
+	return (true);
+}
+//------------------------------------------------------------------------------
+// ClearEnv
+//------------------------------------------------------------------------------
+void ClearEnv(void)
+{
+	usleep(500);	// 500 msec
+	Log.Write("Process terminating ....");
+	TerminateProcess();
+	ShmPrc->Deregister(getpid());	// Deregister process
+	ShmMemory.Delete();				// Delete shared memory
+	Log.Write("Process terminate");
+}
+//------------------------------------------------------------------------------
+// main
+//------------------------------------------------------------------------------
+int main(int argc, char **argv)
+{
+	bool initOK;
+	printf("main start\n");
+	// 작업 환경 초기화
+	initOK = InitEnv(argc, argv);
+
+	// Main Loop
+	while (initOK && !NeedTerminate())
+	{
+		ShmPrc->MarkTime();
+		ManageDebug();		// Debugging 관리
+		ManageProcess();	// Process 관리
+		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
+		ShmPrc->Pause(100);			// 100 msec
+	}
+
+	ClearEnv();
+	printf("main end\n");
+	return (0);
 }
