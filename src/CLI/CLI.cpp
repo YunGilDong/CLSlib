@@ -5,8 +5,8 @@
 //------------------------------------------------------------------------------
 // External
 //------------------------------------------------------------------------------
-extern void CmdHelp(void), CmdKill(void), CmdExit(void);
-extern void CmdTerminate(void);
+extern void CmdHelp(void), CmdProcess(void), CmdDebug(void);
+extern void CmdKill(void), CmdExit(void), CmdTerminate(void);
 //------------------------------------------------------------------------------
 // Prototype
 //------------------------------------------------------------------------------
@@ -20,6 +20,8 @@ CLSsystem *ShmSys;
 CLI_INFO CliInfo;
 CLScommand CmdTable[MAX_CLICMD] = {
 	CLScommand("help", (FUNCPTR)CmdHelp, "help [<명령>]", "명령 도움말 출력"),
+	CLScommand("process", (FUNCPTR)CmdProcess, "process", "프로세스 운영상황 출력"),
+	CLScommand("debug", (FUNCPTR)CmdDebug, "debug <프로세스> <레벨:0-9>", "프로세스 디버깅 레벨을 변경"),
 	CLScommand("kill", (FUNCPTR)CmdKill, "kill <프로세스>", "프로세스 종료"),
 	CLScommand("exit", (FUNCPTR)CmdExit, "exit", "CLI 종료"),
 	CLScommand("terminate", (FUNCPTR)CmdTerminate, "terminate", "CLS system 종료")
@@ -61,11 +63,11 @@ void PrintLogo(void)
 	if (Terminate)
 		return;
 
-	printf("************************************************************");
-	printf("*                                                          *");
-	printf("*                Command Line Interface                    *");
-	printf("*                                                          *");
-	printf("************************************************************");
+	printf("************************************************************\n");
+	printf("*                                                          *\n");
+	printf("*                Command Line Interface                    *\n");
+	printf("*                                                          *\n");
+	printf("************************************************************\n");
 }
 //------------------------------------------------------------------------------
 // PrnLine
@@ -239,7 +241,10 @@ void ProcessCmd(void)
 	for (int idx = 0; idx < MAX_CLICMD; idx++, ptr++)
 	{
 		if (ptr->Check(CliInfo.token, true))
+		{
+			Log.Write("CLI>>%s", CliInfo.command);
 			return;
+		}
 	}
 	PrnError("미정의된 명령어(ProcessCmd) '%s' 오류", CliInfo.token);
 }

@@ -21,7 +21,7 @@ bool CLScommand::Check(char *token, bool run)
 	if (strcmp(token, Command) != 0)
 		return (false);
 
-	printf("%s, %s\n", token, Command);
+	printf("token:%s, cmd:%s\n", token, Command);
 	// 실행 여부 확인
 	if (run)
 	{

@@ -36,7 +36,7 @@ void SigHandler(int sig)
 	case SIGCHLD:	//17
 	case SIGUSR1:   //10
 	default:
-		Log.Write("Signal %d accepted", sig);
+		Log.Write(1,"Signal %d accepted", sig);
 		break;
 	}
 }
@@ -64,16 +64,30 @@ void ManageProcess(void)
 	for (int idx = PRC_CLSMAIN; idx < MAX_PROCESS; idx++, ptr++)
 	{
 		// 프로세스 활성 상태 및 실행 상태 확인
-		if (!ptr->Active)
+		if (!ptr->Active)		// Init여부
 			continue;
 		if (ptr->IsRunning(&state))
 			continue;
 
-		Log.Write("%s Run State : %d", ptr->Name, state);
+		//Log.Write(2,"%s Run State : %d", ptr->Name, state);
+		switch (state)
+		{
+		case RST_OK:
+			Log.Write(2,"%s Run State : RST_OK", ptr->Name);
+			break;
+		case RST_UNEXIST:
+			Log.Write(2,"%s Run State : RST_UNEXIST", ptr->Name);
+			break;
+		case RST_ABNOMAL:
+			Log.Write(2,"%s Run State : RST_ABNOMA", ptr->Name);
+			break;
+		}
+
 		switch (state)
 		{
 		case RST_ABNOMAL: ptr->Kill();
-		case RST_UNEXIST: ptr->Start();	break;
+		case RST_UNEXIST: ptr->Start();	
+			break;
 		default: break;
 		}
 	}
@@ -107,6 +121,8 @@ bool InitProcess(void)
 			ptr->Init(dPtr->name);
 		else if (!ptr->Start(dPtr))
 			return (false);
+		else
+			Log.Write("Start Process [%s]", ptr->Name);
 	}
 	return (true);
 }

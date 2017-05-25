@@ -33,7 +33,7 @@ typedef struct
 	BYTE wtc;			// wait counter
 	WORD prevWdc;		// ¿Ã¿¸ Watch dog counter
 	WORD wdc;			// watch dog counter
-	int elapsed;
+	int elapsed;		// Max Elapsed Time
 	int maxET;
 } RUN_INFO;
 

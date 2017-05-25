@@ -55,6 +55,48 @@ void CmdHelp(void)
 	PrnError("%%%%ERR_'%s' 은(는) 미정의된 명령어 입니다.\n", CliInfo.token);
 }
 //------------------------------------------------------------------------------
+// CmdProcess
+//------------------------------------------------------------------------------
+void CmdProcess(void)
+{
+	RUN_INFO *rPtr;
+	CLSprocess *ptr;
+
+	if (!CheckEOT(EOT_VALID))
+		return;		
+
+	ptr = ShmPtr->process;	
+
+	PrnLine("[프로세스]", '-', true);
+	printf(" [프로세스]   %-6s ACT DBG %-8s %-7s WTC  %-13s\n","PID", "TARGET", "WDC", "ELAPSED TIME");
+	PrnLine("", '-', true);
+
+	for (int idx = 0; idx < MAX_PROCESS; idx++, ptr++)
+	{
+		rPtr = &ptr->RunInfo;
+		printf("%-11s   %-6d %3s %3d %-8s %d/%-3d %3d  %6d/%-6d\n", ptr->Name, ptr->ID, (ptr->Active? "YES" : "NO")
+				,ptr->Level, ptr->Target,rPtr->wdc , rPtr->prevWdc, rPtr->wtc, rPtr->elapsed, rPtr->maxET);		
+	}
+	PrnLine("[프로세스]", '=', false);
+}
+//------------------------------------------------------------------------------
+// CmdDebug
+//------------------------------------------------------------------------------
+void CmdDebug(void)
+{
+	int level;
+	CLSprocess *ptr = ShmPtr->process;
+
+	if ((ptr = GetProcess()) == NULL)	// 입력 프로세스 포인터 리턴
+		return;
+	if (!GetNumber(0, 9, &level, "디버깅 수준"))
+		return;
+	if (!CheckEOT(EOT_VALID))
+		return;
+
+	ptr->RequestLevel(level);
+}
+//------------------------------------------------------------------------------
 // CmdKill
 //------------------------------------------------------------------------------
 void CmdKill(void)
