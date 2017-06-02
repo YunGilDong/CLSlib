@@ -38,11 +38,11 @@ LIBS = -lpthread -lSane
 #
 # Object files
 #
-OBJS = THRtest.o PRC_THR.o
+OBJS = SerialSVR.o
 #
 # Target Process
 #
-TARGET = PRC_THR
+TARGET = SerialSVR
 #
 # Make the Executalbe Program
 #

@@ -45,7 +45,6 @@ public:
 	CLSthread(const char *name, THR_PTR startRoutine, void *arg = NULL, int interval = DEF_CHECK_INTERVAL);
 	virtual ~CLSthread(void);
 
-	//virtual void Run(void) = 0;
 	static void  *Run_(void *);
 
 	bool IsExist(void);

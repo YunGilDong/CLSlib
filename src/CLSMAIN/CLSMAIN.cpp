@@ -18,7 +18,8 @@ CLSprocess *ShmPrc = NULL;
 CLSmemory   ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 PRC_DESC PrcDesc[MAX_PROCESS] = { 
 				{"CLSMAIN",""},
-				{"PRC_TEST01",PRC_TEST01_PROCESS }
+				{"PRC_TEST01",PRC_TEST01_PROCESS },
+				{"PRC_THR",PRC_THR_PROCESS }
 			};
 
 //------------------------------------------------------------------------------

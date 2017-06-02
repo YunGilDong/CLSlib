@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
-#include "PRC_TEST01.h"
+#include "PRC_THR.h"
 //------------------------------------------------------------------------------
 // External Variable
 //------------------------------------------------------------------------------
@@ -14,6 +14,7 @@ void ClearEnv(void);
 // Global Variable
 //------------------------------------------------------------------------------
 CLSprocess *ShmPrc = NULL;
+THRtest ThrObj("PRCTHR", DEF_CHECK_INTERVAL);
 //------------------------------------------------------------------------------
 // Local Variable
 //------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ SHARED_MEM *ShmPtr = NULL;
 CLSsystem *ShmSys = NULL;
 struct timeval TMtimer;
 
-CLSlog Log("PRC_TEST01", DIR_LOG);
+CLSlog Log("PRC_THR", DIR_LOG);
 CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 //------------------------------------------------------------------------------
 // SigHandler
@@ -54,6 +55,13 @@ bool NeedTerminate(void)
 	return (false);
 }
 //------------------------------------------------------------------------------
+// ManageThread
+//------------------------------------------------------------------------------
+void ManageThread(void)
+{
+	ThrObj.manage();
+}
+//------------------------------------------------------------------------------
 // ManageDebug
 //------------------------------------------------------------------------------
 void ManageDebug(void)
@@ -70,8 +78,26 @@ void ManageDebug(void)
 //------------------------------------------------------------------------------
 void InitDebug(void)
 {
-	ShmPrc->RequestLevel(DEFAULT_PRC_TEST01_LEVEL);
+	ShmPrc->RequestLevel(DEFAULT_PRC_THR_LEVEL);
 	ManageDebug();
+}
+//------------------------------------------------------------------------------
+// InitThread
+//------------------------------------------------------------------------------
+bool InitThread(void)
+{
+	// Start thread
+	if (!ThrObj.start())
+		return (false);
+
+	return (true);
+}
+//------------------------------------------------------------------------------
+// TerminateThread
+//------------------------------------------------------------------------------
+void TerminateThread(void)
+{
+	ThrObj.Kill();
 }
 //------------------------------------------------------------------------------
 // InitOption
@@ -88,7 +114,7 @@ bool InitMemory(void)
 		return (false);
 
 	ShmSys = &ShmPtr->system;
-	ShmPrc = &ShmPtr->process[PRC_TEST01];
+	ShmPrc = &ShmPtr->process[PRC_THR];
 
 	return (true);		
 }
@@ -126,6 +152,12 @@ bool InitEnv(int argc, char **argv)
 		Log.Write("Shared memory Initialiaztion fail");
 		return (false);
 	}
+	// Thread 초기화
+	if (!InitThread())
+	{
+		Log.Write("Thread initialization fail");
+		return (false);
+	}
 	
 	InitDebug();	// Initialize dubgging infomation
 	ShmPrc->Register(getpid());
@@ -136,6 +168,7 @@ bool InitEnv(int argc, char **argv)
 //------------------------------------------------------------------------------
 void ClearEnv(void)
 {
+	TerminateThread();		// Terminate thread
 	ShmPrc->Deregister(getpid());	// Deregister process
 	ShmMemory.Detach();				// Detach shared memory
 	Log.Write("Process terminate [%d]", getpid());
@@ -156,6 +189,7 @@ int main(int argc, char **argv)
 	{
 		ShmPrc->MarkTime();		// 시작 시각 기록
 		ManageDebug();			// Debugging 관리
+		ManageThread();			// Thread 관리
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
 		ShmPrc->Pause(100);			// 100 msec
 	}

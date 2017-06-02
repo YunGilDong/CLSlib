@@ -49,7 +49,7 @@ void CLSlog::Logging(void)
 		return;
 
 	fwrite(m_buffer, 1, length, fp);
-	printf("length : %d\n", length);
+	//printf("length : %d\n", length);
 	fclose(fp);
 }
 //------------------------------------------------------------------------------

@@ -73,9 +73,10 @@ void CmdProcess(void)
 
 	for (int idx = 0; idx < MAX_PROCESS; idx++, ptr++)
 	{
+		//printf(" [%d]", idx);
 		rPtr = &ptr->RunInfo;
 		printf("%-11s   %-6d %3s %3d %-8s %d/%-3d %3d  %6d/%-6d\n", ptr->Name, ptr->ID, (ptr->Active? "YES" : "NO")
-				,ptr->Level, ptr->Target,rPtr->wdc , rPtr->prevWdc, rPtr->wtc, rPtr->elapsed, rPtr->maxET);		
+				,ptr->Level, ptr->Target,rPtr->wdc , rPtr->prevWdc, rPtr->wtc, rPtr->elapsed, rPtr->maxET);
 	}
 	PrnLine("[프로세스]", '=', false);
 }
@@ -85,7 +86,7 @@ void CmdProcess(void)
 void CmdDebug(void)
 {
 	int level;
-	CLSprocess *ptr = ShmPtr->process;
+	CLSprocess *ptr = ShmPtr->process; 
 
 	if ((ptr = GetProcess()) == NULL)	// 입력 프로세스 포인터 리턴
 		return;
