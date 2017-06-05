@@ -134,7 +134,8 @@ void CLSthread::Manage(void)
 	switch (state)
 	{
 	case RST_ABNOMAL: Kill();
-	case RST_UNEXIST: Start(); break;
+	case RST_UNEXIST: Start(); 
+		break;
 	default: break;
 	}
 }

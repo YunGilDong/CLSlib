@@ -5,7 +5,8 @@
 //------------------------------------------------------------------------------
 // CLScommand
 //------------------------------------------------------------------------------
-CLScommand::CLScommand(char *name, FUNCPTR function, char *usage, char *desc)
+//CLScommand::CLScommand(char *name, FUNCPTR function, char *usage, char *desc)
+CLScommand::CLScommand(const char *name, FUNCPTR function, const char *usage, const char *desc)
 {
 	sprintf(Command, "%s", name);
 	m_function = function;

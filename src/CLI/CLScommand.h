@@ -28,7 +28,8 @@ private:
 public:
 	char Command[CMDNAME_LEN];
 
-	CLScommand(char *name, FUNCPTR function, char *usage, char *desc);
+	//CLScommand(char *name, FUNCPTR function, char *usage, char *desc);
+	CLScommand(const char *name, FUNCPTR function, const char *usage, const char *desc);
 	bool Check(char *token, bool run = true);	// 명령어 확인
 	void PrintInfo(void);
 	void PrintInfoShort(void);

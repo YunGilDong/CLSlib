@@ -193,7 +193,7 @@ int main(int argc, char **argv)
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
 		ShmPrc->Pause(100);			// 100 msec
 	}
-
+	Log.Write("main end");
 	ClearEnv();
 	return (0);
 }

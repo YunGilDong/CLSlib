@@ -101,6 +101,7 @@ void CLSrunObject::Pause(int msec)
 void CLSrunObject::Register(ULONG id)
 {
 	ID = id;
+	Debug(2,"PRC Register[%d]", ID);
 }
 //------------------------------------------------------------------------------
 // ResetRunInfo

@@ -5,11 +5,10 @@
 #
 # Environment
 #
-WORK_INC =  /home/ygd/test/work/GD/inc/
-WORK_LIB =  /home/ygd/test/work/GD/lib/
-WORK_BIN =  /home/ygd/test/work/GD/bin/
+WORK_INC = /home/ygd/test/work/GD/inc/
+WORK_LIB = /home/ygd/test/work/GD/lib/
+WORK_BIN = /home/ygd/test/work/GD/bin/
 #
-
 
 #
 #----------------------------------------
@@ -23,37 +22,45 @@ WORK_BIN =  /home/ygd/test/work/GD/bin/
 # Rules
 #
 DEFINES =
-CCOPTS = -c -I$(WORK_INC)
+CCOPTS = -c -Wno-write-strings -I$(WORK_INC)
 LDOPTS = $(DEFINES) -L$(WORK_LIB)
+AROPTS = rcv
 
+AR = ar $(AROPTS)
 CC = g++ $(CCOPTS) $(DEFINES)
 LINK = g++ $(LDOPTS)
 
-.cpp.o:	; $(CC) $<
+.cpp.o : ; $(CC) $<
 #
 # Libraries used for linking
 #
-LIBS = -lpthread -lSane
+LIBS =
 #
+# Library files used for dependency tests
+#
+LIB_DEPS =
 #
 # Object files
 #
-OBJS = PRC_TEST01.o
+# Object files
+#
+OBJS = CLSprcthr.o
 #
 # Target Process
 #
-TARGET = PRC_TEST01
+TARGET = libPrc.a
 #
 # Make the Executalbe Program
 #
 default:	$(TARGET)
 
 $(TARGET) : $(OBJS)
-	$(LINK) $(OBJS) $(LIBS) -o $@
-	@mv $@ $(WORK_BIN)
+	$(AR) $@ $(OBJS) $(LIBS)
 	#@mv CLSFILETEST $(WORK_BIN)
-	#@rm -rf $(OBJS)
+	@mv $@ $(WORK_LIB)
+	#@rm -rf  $(OBJS)
 	@rm -rf core $(TARGET) $(OBJS)
 
 clean :
-	rm -rf $(WORK_BIN)$(TARGET) $(OBJS)
+	rm -rf $(WORK_LIB)$(TARGET) $(TARGET) $(OBJS)
+	

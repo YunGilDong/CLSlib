@@ -1,0 +1,19 @@
+cd /home/ygd/test/work/GD/src/GenLib
+make clean
+make
+
+cd /home/ygd/test/work/GD/src/lib
+make clean
+make
+
+cd /home/ygd/test/work/GD/src/CLSMAIN
+make clean
+make
+
+cd /home/ygd/test/work/GD/src/PRC_TEST01
+make clean
+make
+
+cd /home/ygd/test/work/GD/src/PRC_THR
+make clean
+make

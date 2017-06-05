@@ -6,7 +6,7 @@
 # Environment
 #
 WORK_INC = /home/ygd/test/work/GD/inc/
-WORK_LIB = /home/ygd/test/work/GD/lib
+WORK_LIB = /home/ygd/test/work/GD/lib/
 WORK_BIN = /home/ygd/test/work/GD/bin/
 #
 
@@ -59,8 +59,9 @@ $(TARGET) : $(OBJS)
 	$(AR) $@ $(OBJS) $(LIBS)
 	#@mv CLSFILETEST $(WORK_BIN)
 	@mv $@ $(WORK_LIB)
-	@rm -rf  $(OBJS)
+	#@rm -rf  $(OBJS)
+	@rm -rf core $(TARGET) $(OBJS)
 
 clean :
-	rm -rf $(WORK_BIN) $(TARGET) $(OBJS)
+	rm -rf $(WORK_LIB)$(TARGET) $(TARGET) $(OBJS)
 	

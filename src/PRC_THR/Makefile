@@ -50,8 +50,9 @@ default:	$(TARGET)
 
 $(TARGET) : $(OBJS)
 	$(LINK) $(OBJS) $(LIBS) -o $@
-	#@mv CLSFILETEST $(WORK_BIN)
-	@rm -rf  $(OBJS)
+	@mv $@ $(WORK_BIN)
+	#@rm -rf  $(OBJS)
+	@rm -rf core $(TARGET) $(OBJS)
 
 clean :
-	rm -rf $(WORK_BIN) $(TARGET) $(OBJS)
+	rm -rf $(WORK_BIN)$(TARGET) $(TARGET) $(OBJS)

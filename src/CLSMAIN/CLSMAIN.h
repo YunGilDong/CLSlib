@@ -18,8 +18,10 @@
 //------------------------------------------------------------------------------
 // Process Command String
 //------------------------------------------------------------------------------
-#define PRC_TEST01_PROCESS	"/home/ygd/test/work/GD/src/PRC_TEST01/PRC_TEST01"
-#define PRC_THR_PROCESS		"/home/ygd/test/work/GD/src/PRC_THR/PRC_THR"
+//#define PRC_TEST01_PROCESS	"/home/ygd/test/work/GD/src/PRC_TEST01/PRC_TEST01"
+//#define PRC_THR_PROCESS		"/home/ygd/test/work/GD/src/PRC_THR/PRC_THR"
+#define PRC_TEST01_PROCESS	"/home/ygd/test/work/GD/bin/PRC_TEST01"
+#define PRC_THR_PROCESS		"/home/ygd/test/work/GD/bin/PRC_THR"
 //------------------------------------------------------------------------------
 #endif	// CLSMAINH
 //------------------------------------------------------------------------------

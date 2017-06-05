@@ -72,7 +72,7 @@ void PrintLogo(void)
 //------------------------------------------------------------------------------
 // PrnLine
 //------------------------------------------------------------------------------
-void PrnLine(char *info, char lineChar, bool front)
+void PrnLine(const char *info, char lineChar, bool front)
 {
 	int infoLen;
 	char buffer[DBG_LINE_LEN + 1];
@@ -131,7 +131,7 @@ int GetToken(void)
 //------------------------------------------------------------------------------
 // GetInput
 //------------------------------------------------------------------------------
-bool GetInput(char *info, bool optional)
+bool GetInput(const char *info, bool optional)
 {
 	if (GetToken() <= 0)
 	{
@@ -144,7 +144,7 @@ bool GetInput(char *info, bool optional)
 //------------------------------------------------------------------------------
 // CheckNumber
 //------------------------------------------------------------------------------
-bool CheckNumber(int low, int high, int *result, char *info)
+bool CheckNumber(int low, int high, int *result, const char *info)
 {
 	bool valid;
 
@@ -164,7 +164,7 @@ bool CheckNumber(int low, int high, int *result, char *info)
 //------------------------------------------------------------------------------
 // GetNumber
 //------------------------------------------------------------------------------
-bool GetNumber(int low, int high, int *result, char *info)
+bool GetNumber(int low, int high, int *result, const char *info)
 {
 	bool valid;
 

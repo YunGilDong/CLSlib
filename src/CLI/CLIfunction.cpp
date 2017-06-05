@@ -13,9 +13,9 @@ extern CLScommand	CmdTable[];
 
 //------------------------------------------------------------------------------
 extern bool CheckEOT(int);
-extern bool CheckNumber(int, int, int *, char *);
-extern bool GetNumber(int, int, int *, char *);
-extern void PrnLine(char *, char, bool);
+extern bool CheckNumber(int, int, int *, const char *);
+extern bool GetNumber(int, int, int *, const char *);
+extern void PrnLine(const char *, char, bool);
 extern void PrnError(const char *, ...);
 extern CLSprocess *GetProcess(void);
 //------------------------------------------------------------------------------

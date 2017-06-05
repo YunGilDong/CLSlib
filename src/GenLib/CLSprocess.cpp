@@ -42,7 +42,7 @@ bool CLSprocess::IsExist(void)
 {
 	// ID 확인
 	if (ID <= 0)
-		return (false);
+		return (false);	
 
 	// Object 존재 상태 확인
 	if (kill(ID, 0) < 0)	 // 프로세스 그룹에 신호를 보냄 0:success, -1 is fail
@@ -82,6 +82,7 @@ bool CLSprocess::IsRunning(RUN_STATE *state)
 //------------------------------------------------------------------------------
 void CLSprocess::Kill(void)
 {
+	Debug(2,"Kill[%d]", ID);
 	kill(ID, SIGKILL);
 }
 //------------------------------------------------------------------------------

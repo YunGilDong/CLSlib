@@ -43,10 +43,12 @@ void THRtest::test()
 }
 void THRtest::Run(void)
 {
-	pritnf("Thread Run \n");
+	printf("Thread Run \n");
 	while (true)
 	{
-		printf("%d ", m_num++);
-		usleep(100000);	// 1000msec
+		//Log.Write("%d ", m_num++);
+		m_num++;
+		UpdateRunInfo();	// 실행 정보 갱신
+		Pause(1000);			// 1000 msec
 	}
 }
