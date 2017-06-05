@@ -7,6 +7,7 @@
 #include "Define.h"
 #include "CLSsystem.h"
 #include "CLSprocess.h"
+#include "CLSprcthr.h"
 //------------------------------------------------------------------------------
 // Constant
 //------------------------------------------------------------------------------
@@ -27,6 +28,7 @@ typedef struct
 {
 	CLSsystem	system;
 	CLSprocess	process[MAX_PROCESS];
+	CLSprcthr	prcthr[5];
 
 	int shrArr[10];
 	bool Terminate;
