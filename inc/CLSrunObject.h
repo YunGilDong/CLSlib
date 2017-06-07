@@ -78,6 +78,7 @@ public:
 	void Register(ULONG id);
 	void ResetRunInfo(void);
 	void UpdateRunInfo(void);
+	void SetElapsedTime(void);
 
 	//--------------------------------
 	// YGD

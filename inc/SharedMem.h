@@ -28,7 +28,7 @@ typedef struct
 {
 	CLSsystem	system;
 	CLSprocess	process[MAX_PROCESS];
-	CLSprcthr	prcthr[5];
+	CLSprcthr	prcthr;
 
 	int shrArr[10];
 	bool Terminate;
@@ -41,5 +41,3 @@ typedef struct
 //------------------------------------------------------------------------------
 // End of SharedMem.h
 //------------------------------------------------------------------------------
-
-

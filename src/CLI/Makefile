@@ -6,6 +6,7 @@
 # Environment
 #
 WORK_INC =  /home/ygd/test/work/GD/inc/
+WORK_INC2 = /home/ygd/test/work/GD/src/PRC_THR/
 WORK_LIB =  /home/ygd/test/work/GD/lib/
 WORK_BIN =  /home/ygd/test/work/GD/bin/
 #
@@ -23,7 +24,7 @@ WORK_BIN =  /home/ygd/test/work/GD/bin/
 # Rules
 #
 DEFINES =
-CCOPTS = -c -I$(WORK_INC)
+CCOPTS = -c -I$(WORK_INC) -I$(WORK_INC2)
 LDOPTS = $(DEFINES) -L$(WORK_LIB)
 
 CC = g++ $(CCOPTS) $(DEFINES)

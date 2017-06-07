@@ -65,20 +65,20 @@ void CmdProcess(void)
 	if (!CheckEOT(EOT_VALID))
 		return;		
 
-	ptr = ShmPtr->process;	
-
-	PrnLine("[프로세스]", '-', true);
-	printf(" [프로세스]   %-6s ACT DBG %-8s %-7s WTC  %-13s\n","PID", "TARGET", "WDC", "ELAPSED TIME");
+	ptr = ShmPtr->process;		
+	PrnLine("[Process]", '-', true);
+	printf(" [Process]    %-6s ACT DBG %-8s %-8s WTC  %-13s THREAD\n","PID", "TARGET", "WDC", "ELAPSED TIME");
 	PrnLine("", '-', true);
 
 	for (int idx = 0; idx < MAX_PROCESS; idx++, ptr++)
 	{
+		ptr->SetElapsedTime();
 		//printf(" [%d]", idx);
 		rPtr = &ptr->RunInfo;
-		printf("%-11s   %-6d %3s %3d %-8s %d/%-3d %3d  %6d/%-6d\n", ptr->Name, ptr->ID, (ptr->Active? "YES" : "NO")
-				,ptr->Level, ptr->Target,rPtr->wdc , rPtr->prevWdc, rPtr->wtc, rPtr->elapsed, rPtr->maxET);
+		printf("%-11s   %-6d %3s %3d %-8s %d/%-3d %3d  %6d/%-6d %7s\n", ptr->Name, ptr->ID, (ptr->Active? "YES" : "NO")
+				,ptr->Level, ptr->Target,rPtr->wdc , rPtr->prevWdc, rPtr->wtc, rPtr->elapsed, rPtr->maxET,".");
 	}
-	PrnLine("[프로세스]", '=', false);
+	PrnLine("[Process]", '=', false);
 }
 //------------------------------------------------------------------------------
 // CmdDebug

@@ -38,6 +38,7 @@ private:
 	void Init(THR_PTR startRoutine = NULL, void *arg = NULL, int interval = DEF_CHECK_INTERVAL);
 protected:
 	virtual void Run(void) = 0;
+	//virtual void Run(void);
 public:
 	CLSthread(void);
 	CLSthread(const char *name);

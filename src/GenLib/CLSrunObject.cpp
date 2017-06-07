@@ -126,6 +126,20 @@ void CLSrunObject::UpdateRunInfo(void)
 	ptr->wdc++;
 }
 //------------------------------------------------------------------------------
+// SetElapsedTime
+//------------------------------------------------------------------------------
+void CLSrunObject::SetElapsedTime(void)
+{
+	RUN_INFO *ptr = &RunInfo;
+	struct timeval endTime, elapsed;
+
+	gettimeofday(&endTime, NULL);
+	timersub(&endTime, &m_startTime, &elapsed);
+	ptr->elapsed = TimerToMsec(&elapsed);
+	if (ptr->elapsed > ptr->maxET)
+		ptr->maxET = ptr->elapsed;
+}
+//------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
 ULONG CLSrunObject::GetThreadID(void)

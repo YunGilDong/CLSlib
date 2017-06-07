@@ -17,3 +17,7 @@ make
 cd /home/ygd/test/work/GD/src/PRC_THR
 make clean
 make
+
+cd /home/ygd/test/work/GD/src/CLI
+make clean
+make
