@@ -30,12 +30,14 @@ public:
 	THRtest *Thread;
 
 	CLSprcthr(void);
+	//CLSprcthr(THRtest *ptr);
 	~CLSprcthr(void);
 
 	void Delete(void);
 	void Init(void);
 	void Init(DB_PRCTHR *pInfo);
 	void Update(DB_PRCTHR *pInfo);
+
 };
 
 

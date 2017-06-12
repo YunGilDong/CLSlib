@@ -25,6 +25,8 @@ struct timeval TMtimer;
 
 CLSlog Log("PRC_THR", DIR_LOG);
 CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
+
+CLSprcthr *PrcThr = NULL;
 //------------------------------------------------------------------------------
 // SigHandler
 //------------------------------------------------------------------------------
@@ -85,11 +87,15 @@ void InitDebug(void)
 // InitThread
 //------------------------------------------------------------------------------
 bool InitThread(void)
-{
+{	
+	Log.Write("InitThread 1");
+	PrcThr->Thread = new THRtest();
+	PrcThr->Thread = &ThrObj;
 	// Start thread
 	if (!ThrObj.start())
 		return (false);
 
+	Log.Write("InitThread 2");
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -104,7 +110,9 @@ void TerminateThread(void)
 //------------------------------------------------------------------------------
 void InitPRCTHR(void)
 {
-
+	Log.Write("InitPRCTHR 1");
+	PrcThr = &ShmPtr->prcthr;
+	Log.Write("InitPRCTHR 2[%d]", errno);
 }
 //------------------------------------------------------------------------------
 // InitOption
@@ -152,6 +160,7 @@ bool InitEnv(int argc, char **argv)
 
 	InitSignal();
 	InitOption(argc, argv);
+	InitPRCTHR();
 
 	// 공유메모리 초기화
 	if (!InitMemory())
