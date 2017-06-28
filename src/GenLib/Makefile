@@ -1,13 +1,13 @@
 #
 # Makefile
 #
-# Target: CLSFILETEST
+# Target: GenLib
 #
 # Environment
 #
-WORK_INC = /home/ygd/test/work/GD/inc/
-WORK_LIB = /home/ygd/test/work/GD/lib/
-WORK_BIN = /home/ygd/test/work/GD/bin/
+WORK_INC = $(WORK_HOME)/inc/
+WORK_LIB = $(WORK_HOME)/lib/
+WORK_BIN = $(WORK_HOME)/bin/
 #
 
 #
@@ -44,7 +44,7 @@ LIB_DEPS =
 #
 # Object files
 #
-OBJS = CLSobject.o CLStbObject.o CLSrunObject.o CLSmemory.o CLSprocess.o CLSthread.o CLScomm.o CLStcp.o CLSlog.o CLSsystem.o
+OBJS = CLSobject.o CLStbObject.o CLSrunObject.o CLSmemory.o CLSprocess.o CLSthread.o CLSthreadC.o CLScomm.o CLStcp.o CLSlog.o CLSsystem.o
 #OBJS = CLStbObject.o CLSrunObject.o test.o
 #
 # Target Process

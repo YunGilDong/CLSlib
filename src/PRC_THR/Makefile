@@ -1,14 +1,14 @@
 #
 # Makefile
 #
-# Target: CLSFILETEST
+# Target: PRC_THR
 #
 # Environment
 #
-WORK_INC =  /home/ygd/test/work/GD/inc/
-WORK_INC2 = /home/ygd/test/work/GD/src/PRC_THR/
-WORK_LIB =  /home/ygd/test/work/GD/lib/
-WORK_BIN =  /home/ygd/test/work/GD/bin/
+WORK_INC =  $(WORK_HOME)/inc/
+WORK_INC2 = $(WORK_HOME)/src/PRC_THR/
+WORK_LIB =  $(WORK_HOME)/lib/
+WORK_BIN =  $(WORK_HOME)/bin/
 #
 
 

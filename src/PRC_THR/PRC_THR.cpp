@@ -89,8 +89,8 @@ void InitDebug(void)
 bool InitThread(void)
 {	
 	Log.Write("InitThread 1");
-	PrcThr->Thread = new THRtest();
-	PrcThr->Thread = &ThrObj;
+	//PrcThr->Thread = new THRtest();
+	//PrcThr->Thread = &ThrObj;
 	// Start thread
 	if (!ThrObj.start())
 		return (false);
@@ -111,7 +111,7 @@ void TerminateThread(void)
 void InitPRCTHR(void)
 {
 	Log.Write("InitPRCTHR 1");
-	PrcThr = &ShmPtr->prcthr;
+	//PrcThr = &ShmPtr->prcthr;
 	Log.Write("InitPRCTHR 2[%d]", errno);
 }
 //------------------------------------------------------------------------------
