@@ -45,7 +45,7 @@ LIB_DEPS =
 #
 # Object files
 #
-OBJS = CLSprcthr.o
+OBJS = CLSprcthrc.o
 #
 # Target Process
 #

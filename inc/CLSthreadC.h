@@ -42,7 +42,7 @@ protected:
 public:
 	CLSthreadC(void);
 	CLSthreadC(const char *name);
-	CLSthreadC(const char *name, int interval = DEF_CHECK_INTERVAL);
+	//CLSthreadC(const char *name, int interval = DEF_CHECK_INTERVAL);
 	CLSthreadC(const char *name, THR_PTRC startRoutine, void *arg = NULL, int interval = DEF_CHECK_INTERVAL);
 	virtual ~CLSthreadC(void);
 	

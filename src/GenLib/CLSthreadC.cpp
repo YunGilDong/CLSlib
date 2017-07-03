@@ -18,18 +18,18 @@
 //------------------------------------------------------------------------------
 CLSthreadC::CLSthreadC(void)
 {
-	Init();
+	//Init();
 }
 //------------------------------------------------------------------------------
 CLSthreadC::CLSthreadC(const char *name) :CLSrunObject(name)
 {
 	Init();
 }
-//------------------------------------------------------------------------------
-CLSthreadC::CLSthreadC(const char *name, int interval) : CLSrunObject(name)
-{
-	Init(NULL,NULL,interval);
-}
+////------------------------------------------------------------------------------
+//CLSthreadC::CLSthreadC(const char *name, int interval) : CLSrunObject(name)
+//{
+//	Init(NULL,NULL,interval);
+//}
 //------------------------------------------------------------------------------
 CLSthreadC::CLSthreadC(const char *name, THR_PTRC startRoutine, void *arg, int interval) :CLSrunObject(name)
 {
