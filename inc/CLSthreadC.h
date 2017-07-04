@@ -37,8 +37,7 @@ private:
 
 	void Init(THR_PTRC startRoutine = NULL, void *arg = NULL, int interval = DEF_CHECK_INTERVAL);
 protected:
-	virtual void Run(void) = 0;
-	//virtual void Run(void);
+
 public:
 	CLSthreadC(void);
 	CLSthreadC(const char *name);

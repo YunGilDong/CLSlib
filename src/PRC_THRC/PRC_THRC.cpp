@@ -24,7 +24,18 @@ CLSsystem *ShmSys = NULL;
 struct timeval TMtimer;
 
 CLSlog Log("PRC_THRC", DIR_LOG);
+CLSmap Map("CLMAP");
 CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
+
+
+void *THRFunc(void *data);
+
+CLSthreadC	Thrt("THRFunc", THRFunc);
+
+void *THRFunc(void *data)
+{
+	printf("THRFunc\n");
+}
 //------------------------------------------------------------------------------
 // SigHandler
 //------------------------------------------------------------------------------
@@ -46,13 +57,26 @@ void SigHandler(int sig)
 bool NeedTerminate(void)
 {
 	if (!ShmPrc->IsActiveProcess(getpid()))
+	{	
+		Log.Write("pid err");
 		return (true);
+	}
 	if (Terminate)
+	{
+		Log.Write("is terminate");
 		return (true);
+	}
 	if (ShmSys->Terminate)
+	{
+		Log.Write("system terminate");
 		return (true);
+	}
 
 	return (false);
+}
+void ManageThread(void)
+{
+	//Thrt.Manage();
 }
 //------------------------------------------------------------------------------
 // ManageDebug
@@ -66,6 +90,14 @@ void ManageDebug(void)
 	Log.SetDebug(ShmPrc->ReqLevel, ShmPrc->ReqTarget);
 	ShmPrc->ChangeDebug = false;
 }
+bool InitThread(void)
+{
+	// Start server thread
+	/*if (!Thrt.Start())
+		return(false);*/
+
+	return(true);
+}
 //------------------------------------------------------------------------------
 // InitDebug
 //------------------------------------------------------------------------------
@@ -73,6 +105,14 @@ void InitDebug(void)
 {
 	ShmPrc->RequestLevel(DEFAULT_PRC_THRC_LEVEL);
 	ManageDebug();
+}
+bool InitPRCTHRC(void)
+{
+	CLSprcthrc *pTHRC = ShmPtr->prcthrc;
+
+	// DB Map
+	for (int idx = 0; idx < ShmSys->PrcThrC; idx++, pTHRC++)
+		Map.AddDB(pTHRC->Mng.address, pTHRC);
 }
 //------------------------------------------------------------------------------
 // InitOption
@@ -89,7 +129,7 @@ bool InitMemory(void)
 		return (false);
 
 	ShmSys = &ShmPtr->system;
-	ShmPrc = &ShmPtr->process[PRC_TEST01];
+	ShmPrc = &ShmPtr->process[PRC_THRC];
 
 	return (true);		
 }
@@ -127,6 +167,12 @@ bool InitEnv(int argc, char **argv)
 		Log.Write("Shared memory Initialiaztion fail");
 		return (false);
 	}
+	// Thread 초기화
+	if (!InitThread())
+	{
+		Log.Write("Thread initialization fail");
+		return (false);
+	}
 	
 	InitDebug();	// Initialize dubgging infomation
 	ShmPrc->Register(getpid());
@@ -157,6 +203,8 @@ int main(int argc, char **argv)
 	{
 		ShmPrc->MarkTime();		// 시작 시각 기록
 		ManageDebug();			// Debugging 관리
+		//ManageThread();			// Thread 관리
+
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
 		ShmPrc->Pause(100);			// 100 msec
 	}

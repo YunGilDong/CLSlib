@@ -1,12 +1,11 @@
 #
 # Makefile
 #
-# Target: CLSprcthr
+# Target: GenLib
 #
 # Environment
 #
 WORK_INC = $(WORK_HOME)/inc/
-WORK_INC2 = $(WORK_HOME)/src/PRC_THR/
 WORK_LIB = $(WORK_HOME)/lib/
 WORK_BIN = $(WORK_HOME)/bin/
 #
@@ -23,7 +22,7 @@ WORK_BIN = $(WORK_HOME)/bin/
 # Rules
 #
 DEFINES =
-CCOPTS = -c -Wno-write-strings -I$(WORK_INC) -I$(WORK_INC2)
+CCOPTS = -c -Wno-write-strings -I$(WORK_INC)
 LDOPTS = $(DEFINES) -L$(WORK_LIB)
 AROPTS = rcv
 
@@ -49,7 +48,7 @@ OBJS = CLSprcthrc.o
 #
 # Target Process
 #
-TARGET = libPrc.a
+TARGET = libYgd.a
 #
 # Make the Executalbe Program
 #
@@ -57,9 +56,7 @@ default:	$(TARGET)
 
 $(TARGET) : $(OBJS)
 	$(AR) $@ $(OBJS) $(LIBS)
-	#@mv CLSFILETEST $(WORK_BIN)
 	@mv $@ $(WORK_LIB)
-	#@rm -rf  $(OBJS)
 	@rm -rf core $(TARGET) $(OBJS)
 
 clean :

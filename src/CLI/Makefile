@@ -34,7 +34,8 @@ LINK = g++ $(LDOPTS)
 #
 # Libraries used for linking
 #
-LIBS = -lpthread -lSane
+#LIBS = -lpthread -lSane
+LIBS = -lpthread -lSane -lYgd
 #
 #
 # Object files

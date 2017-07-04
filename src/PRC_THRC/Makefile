@@ -6,7 +6,6 @@
 # Environment
 #
 WORK_INC =  $(WORK_HOME)/inc/
-WORK_INC2 = $(WORK_HOME)/src/PRC_THR/
 WORK_LIB =  $(WORK_HOME)/lib/
 WORK_BIN =  $(WORK_HOME)/bin/
 #abc
@@ -24,7 +23,7 @@ WORK_BIN =  $(WORK_HOME)/bin/
 # Rules
 #
 DEFINES =
-CCOPTS = -c -I$(WORK_INC) -I$(WORK_INC2)
+CCOPTS = -c -I$(WORK_INC)
 LDOPTS = $(DEFINES) -L$(WORK_LIB)
 
 CC = g++ $(CCOPTS) $(DEFINES)
@@ -34,7 +33,8 @@ LINK = g++ $(LDOPTS)
 #
 # Libraries used for linking
 #
-LIBS = -lpthread -lSane
+#LIBS = -pthread -lSane
+LIBS = -lYgd -lSane -pthread
 #
 #
 # Object files
@@ -51,8 +51,8 @@ default:	$(TARGET)
 
 $(TARGET) : $(OBJS)
 	$(LINK) $(OBJS) $(LIBS) -o $@
-	#@mv $@ $(WORK_BIN)
-	#@rm -rf $(OBJS)
-	#@rm -rf core $(TARGET) $(OBJS)
+	@mv $@ $(WORK_BIN)
+	@rm -rf core $(TARGET) $(OBJS)
+
 clean :
-	rm -rf $(WORK_BIN)$(TARGET) $(OBJS)
+	rm -rf $(WORK_BIN)$(TARGET) $(OBJS) $(TARGET)

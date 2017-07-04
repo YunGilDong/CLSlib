@@ -25,7 +25,9 @@ void CLSprcthr::Delete(void)
 	if (Thread != NULL)
 	{
 		if (Thread->Active)
-			Thread->stop();
+		{
+			Thread->stop();			
+		}
 		delete Thread;
 		Thread = NULL;
 	}

@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
-#pragma hdrstop
+//#pragma hdrstop
 #include "CLSprcthrc.h"
 //------------------------------------------------------------------------------
 // CLSprcthrc
@@ -38,7 +38,10 @@ void CLSprcthrc::Delete(void)
 	if (Thread != NULL)
 	{
 		if (Thread->Active)
-			Thread->Stop(true);
+		{
+			Thread->Stop(true);			
+			printf("Thread Stop\n");
+		}
 		delete Thread;
 		Thread = NULL;
 	}
@@ -63,3 +66,6 @@ void CLSprcthrc::Init(DB_PRCTHRC *pInfo)
 	InitState(pInfo);
 	Active = false;
 }
+//------------------------------------------------------------------------------
+// End of CLSprcthrc.cpp
+//------------------------------------------------------------------------------

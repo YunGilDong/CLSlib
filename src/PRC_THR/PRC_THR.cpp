@@ -26,7 +26,7 @@ struct timeval TMtimer;
 CLSlog Log("PRC_THR", DIR_LOG);
 CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 
-CLSprcthr *PrcThr = NULL;
+//CLSprcthr *PrcThr = NULL;
 //------------------------------------------------------------------------------
 // SigHandler
 //------------------------------------------------------------------------------
@@ -89,8 +89,6 @@ void InitDebug(void)
 bool InitThread(void)
 {	
 	Log.Write("InitThread 1");
-	//PrcThr->Thread = new THRtest();
-	//PrcThr->Thread = &ThrObj;
 	// Start thread
 	if (!ThrObj.start())
 		return (false);
@@ -110,9 +108,6 @@ void TerminateThread(void)
 //------------------------------------------------------------------------------
 void InitPRCTHR(void)
 {
-	Log.Write("InitPRCTHR 1");
-	//PrcThr = &ShmPtr->prcthr;
-	Log.Write("InitPRCTHR 2[%d]", errno);
 }
 //------------------------------------------------------------------------------
 // InitOption

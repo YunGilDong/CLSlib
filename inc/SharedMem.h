@@ -7,7 +7,7 @@
 #include "Define.h"
 #include "CLSsystem.h"
 #include "CLSprocess.h"
-#include "CLSprcthr.h"
+#include "CLSprcthrc.h"
 //------------------------------------------------------------------------------
 // Constant
 //------------------------------------------------------------------------------
@@ -20,7 +20,8 @@
 #define PRC_CLSMAIN			0
 #define PRC_TEST01			PRC_CLSMAIN+1
 #define PRC_THR				PRC_TEST01+1
-#define MAX_PROCESS			PRC_THR+1
+#define PRC_THRC			PRC_THR+1
+#define MAX_PROCESS			PRC_THRC+1
 //------------------------------------------------------------------------------
 // SHARED_MEM
 //------------------------------------------------------------------------------
@@ -28,7 +29,7 @@ typedef struct
 {
 	CLSsystem	system;
 	CLSprocess	process[MAX_PROCESS];
-	CLSprcthr	prcthr;
+	CLSprcthrc	prcthrc[MAX_PRCTHRC];
 
 	int shrArr[10];
 	bool Terminate;

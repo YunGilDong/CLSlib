@@ -102,15 +102,7 @@ void CmdDebug(void)
 //------------------------------------------------------------------------------
 void CmdPrcThr(void)
 {
-	CLSprcthr *pPrcTHR;
-
-	pPrcTHR = &ShmPtr->prcthr;
-
-
-	if (!CheckEOT(EOT_VALID))
-		return;
-
-
+	
 }
 //------------------------------------------------------------------------------
 // CmdKill

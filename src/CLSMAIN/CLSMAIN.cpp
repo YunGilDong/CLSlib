@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 // External
 //------------------------------------------------------------------------------
+extern bool	LoadDatabase(void);
+//------------------------------------------------------------------------------
 // Global
 //------------------------------------------------------------------------------
 CLSlog Log("CLSMAIN", DIR_LOG);
@@ -19,7 +21,8 @@ CLSmemory   ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 PRC_DESC PrcDesc[MAX_PROCESS] = { 
 				{"CLSMAIN",""},
 				{"PRC_TEST01",PRC_TEST01_PROCESS },
-				{"PRC_THR",PRC_THR_PROCESS }
+				{"PRC_THR",PRC_THR_PROCESS },
+				{"PRC_THRC",PRC_THRC_PROCESS }
 			};
 
 //------------------------------------------------------------------------------
@@ -160,6 +163,13 @@ void TerminateProcess(void)
 //------------------------------------------------------------------------------
 // InitDebug
 //------------------------------------------------------------------------------
+bool InitDatabase(void)
+{
+	bool loadOK;
+
+	loadOK = LoadDatabase();
+	return (loadOK);
+}
 void InitDebug(void)
 {
 	ShmPrc->RequestLevel(DEF_CLSMAIN_LEVEL);
@@ -218,6 +228,13 @@ bool InitEnv(int argc, char **argv)
 	}
 
 	InitDebug();	// 디버깅 정보 초기화
+	
+	// Database 초기화
+	if (!InitDatabase())
+	{
+		Log.Write("Database initialization fail");
+		return (false);
+	}
 
 	// Process 초기화
 	if (!InitProcess())

@@ -23,27 +23,11 @@
 #define	DB_ALIAS			(char *)"tram"
 //------------------------------------------------------------------------------
 #define	MAX_APPROACH		4
-#define	MAX_BIT				16
-#define	MAX_LOCAL			32
-#define	MAX_MDT				32
-#define	MAX_ROUTE			32
-#define	MAX_STOP			32
-#define	MAX_STOP_PER_ROUTE	32
-#define	MAX_TAG				128
-#define	MAX_TAG_PER_ROUTE	32
-#define	MAX_TRAM			32
-#define	MAX_TSU				32
-#define	MAX_TURNOUT			16
-//------------------------------------------------------------------------------
-#define	MAX_IMAGE			MAX_TSU			// 순서 주의 ... MAX_TSU 뒤에 정의
-#define	MAX_LAMP			(MAX_LOCAL*MAX_APPROACH)
-#define	MAX_LINK			(MAX_LOCAL*MAX_APPROACH*2)
-#define	MAX_RTTAG			(MAX_ROUTE*MAX_TAG_PER_ROUTE)
-#define	MAX_RTSTOP			(MAX_ROUTE*MAX_STOP_PER_ROUTE)
+#define	MAX_PRCTHRC			4
 //------------------------------------------------------------------------------
 // Directory
 //------------------------------------------------------------------------------
-#define	DIR_HOME				"/home/ygd/test/work/GD/"
+#define	DIR_HOME				"/home/ygd/test/work/GD/CLSlib"
 #define	DIR_LOG					DIR_HOME"/log/"
 #define	DIR_BIN					DIR_HOME"/bin/"
 //------------------------------------------------------------------------------
