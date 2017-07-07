@@ -42,7 +42,7 @@ public:
 	void Erase(char *id);
 	CLSprcthrc *Get(char *id);
 	CLSprcthrc *Get(pthread_t id);
-	CLSprcthrc *GetDB(char *address);
+	CLSprcthrc *GetDB(const char *address);
 };
 //------------------------------------------------------------------------------
 #endif // CLSmapH

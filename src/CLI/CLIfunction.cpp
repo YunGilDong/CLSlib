@@ -100,9 +100,17 @@ void CmdDebug(void)
 //------------------------------------------------------------------------------
 // CmdPrcThr
 //------------------------------------------------------------------------------
-void CmdPrcThr(void)
+void CmdPrcThrc(void)
 {
-	
+	int end = ShmSys->PrcThrC;
+	CLSprcthrc *pTHRC;
+
+	if (!CheckEOT(EOT_VALID))
+		return;
+
+	PrnLine("[prcthrc]", '-', true);
+	printf("%-6s  ACT  THREAD %-15s\n", "ID", "ADDRESS");
+	PrnLine("", '-', true);
 }
 //------------------------------------------------------------------------------
 // CmdKill

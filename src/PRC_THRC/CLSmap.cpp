@@ -83,7 +83,7 @@ CLSprcthrc *CLSmap::Get(pthread_t id)
 //------------------------------------------------------------------------------
 // GetDB
 //------------------------------------------------------------------------------
-CLSprcthrc *CLSmap::GetDB(char *address)
+CLSprcthrc *CLSmap::GetDB(const char *address)
 {
 	MPDB_IT it;
 	if ((it = m_dbase.find(address)) == m_dbase.end())
