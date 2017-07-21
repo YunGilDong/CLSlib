@@ -99,7 +99,7 @@ void TCLclearEnv(void)
 			break;
 		Log.Debug("THRclient run");
 		ThrClient.UpdateRunInfo();	// 실행 정보 갱신
-		ThrClient.Pause(1000);		// 5 msec
+		ThrClient.Pause(1000);		// 10 msec
 	}
 	TCLclearEnv();		// 작업 환경 정리
 }

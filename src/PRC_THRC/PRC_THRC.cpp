@@ -34,6 +34,7 @@ CLSthreadC	ThrClient("PRCTHRC", THRclient);
 void SigHandler(int sig)
 {
 	Log.Debug("Signal %d accepted", sig);
+	Log.Write("Signal %d accepted", sig);
 	switch (sig)
 	{
 	case SIGTERM:	// 15
@@ -236,6 +237,7 @@ void InitSignal(void)
 	setpgrp();
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGTTOU, SIG_IGN);
+	Log.Write("Init Signal.");
 }
 //------------------------------------------------------------------------------
 // InitEnv
