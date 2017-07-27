@@ -98,9 +98,9 @@ void CmdDebug(void)
 	ptr->RequestLevel(level);
 }
 //------------------------------------------------------------------------------
-// CmdPrcThr
+// CmdPrcthrc
 //------------------------------------------------------------------------------
-void CmdPrcThrc(void)
+void CmdPrcthrc(void)
 {
 	int end = ShmSys->PrcThrC, start = 1;
 	CLSprcthrc *pTHRC;

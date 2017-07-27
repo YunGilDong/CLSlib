@@ -83,7 +83,11 @@ bool TCLinitEnv(void)
 void TCLclearEnv(void)
 {
 	ThrClient.Stop();		// Terminate thread
-}void *THRclient(void *data)
+}
+//------------------------------------------------------------------------------
+// THRclient
+//------------------------------------------------------------------------------
+void *THRclient(void *data)
 {
 	bool initOK;
 

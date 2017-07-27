@@ -82,7 +82,7 @@ bool CLSprocess::IsRunning(RUN_STATE *state)
 //------------------------------------------------------------------------------
 void CLSprocess::Kill(void)
 {
-	Debug(2,"Kill[%d]", ID);
+	Debug(1,"Kill[%d]", ID);
 	kill(ID, SIGKILL);
 }
 //------------------------------------------------------------------------------

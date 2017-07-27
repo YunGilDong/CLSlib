@@ -17,6 +17,7 @@ typedef struct
 	int id;
 	int val;
 } DB_PRCTHR;
+#define DB_PRCTHR_SIZE	sizeof(DB_PRCTHR)
 //------------------------------------------------------------------------------
 // DB_PRC_THR (TEST)
 //------------------------------------------------------------------------------
@@ -26,8 +27,16 @@ typedef struct
 	char address[46]; //
 } DB_PRCTHRC;
 
-
-#define DB_PRCTHR_SIZE	sizeof(DB_PRCTHR)
+//------------------------------------------------------------------------------
+// DB_PRC_MTHR
+//------------------------------------------------------------------------------
+typedef struct
+{
+	int id;	//id
+	char address[46];
+} DB_PRCMTHR;
+#define DB_PRCMTHR_SIZE		sizeof(DB_PRCMTHR);
+//------------------------------------------------------------------------------
 #endif	//DatabaseH
 //------------------------------------------------------------------------------
 // End of Database.h
