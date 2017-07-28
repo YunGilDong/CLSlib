@@ -39,7 +39,7 @@ LIBS = -lYgd -lSane -pthread
 #
 # Object files
 #
-OBJS = PRC_MTHR.o THRclient.o CLSmap.o
+OBJS = PRC_MTHR.o THRserver.o THRclient.o CLSmap.o
 #
 # Target Process
 #

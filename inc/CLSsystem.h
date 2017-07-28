@@ -13,6 +13,7 @@ class CLSsystem : public CLSobject
 private:
 public:
 	int		PrcThrC;		// PrcThr 수
+	int		Prcmthr;		// Prcmthr 수
 	bool	Terminate;		// 시스템 종료 요구	
 
 	CLSsystem(void);
