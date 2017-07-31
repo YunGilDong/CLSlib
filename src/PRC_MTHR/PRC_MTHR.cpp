@@ -7,8 +7,7 @@
 //------------------------------------------------------------------------------
 extern void *THRserver(void *);
 extern void TSVsigHandler(int);
-//extern void TCLsigHandler(int);
-void TCLsigHandler(CLSprcmthr *, int);
+extern void TCLsigHandler(CLSprcmthr *, int);
 //------------------------------------------------------------------------------
 // Prototype
 //------------------------------------------------------------------------------
@@ -28,11 +27,6 @@ struct timeval TMtimer;
 
 CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 CLSthreadC ThrServer("MTHRSV", THRserver);
-//------------------------------------------------------------------------------
-void TCLsigHandler(CLSprcmthr *ptr, int sig)
-{
-
-}
 //------------------------------------------------------------------------------
 // SigHandler
 //------------------------------------------------------------------------------
@@ -118,7 +112,7 @@ void ManageThread(void)
 
 	// Manage server thread
 	ThrServer.Manage();
-
+	/*
 	// Manage client thread
 	for (it = Map.Client.begin(); it != Map.Client.end();)
 	{
@@ -139,6 +133,7 @@ void ManageThread(void)
 			Map.Client.erase(it++);
 		}
 	}
+	*/
 }
 //------------------------------------------------------------------------------
 // ManageTest
@@ -196,6 +191,7 @@ void TerminateThread(void)
 	CLSthreadC *pThread;
 	MAP_CLIENT::iterator it;
 
+	Log.Write(1, "TerminateThread..[1]");
 	// Terminate client thread
 	for (it = Map.Client.begin(); it != Map.Client.end();)
 	{
@@ -212,6 +208,7 @@ void TerminateThread(void)
 			++it;
 		}
 	}
+	Log.Write(1, "TerminateThread[2]");
 	// Terminate server thread
 	ThrServer.Kill();
 }
@@ -306,10 +303,12 @@ bool InitEnv(int argc, char **argv)
 //------------------------------------------------------------------------------
 void ClearEnv(void)
 {
+	Log.Write(1, "ClearEnv..[1]");
 	TerminateThread();			// Terminate thread
 	ShmPrc->Deregister(getpid());	// Deregister process
 	ShmMemory.Detach();				// Detach shared memory
-	Log.Write("Process terminate [%d]", getpid());
+	Log.Write(1, "ClearEnv[2]");
+	Log.Write("Process terminate [%d]", getpid());	
 	exit(0);
 }
 //------------------------------------------------------------------------------
@@ -319,7 +318,7 @@ int main(int argc, char **argv)
 {
 	bool initOK;
 
-	/*
+	
 	// 작업 환경 초기화
 	initOK = InitEnv(argc, argv);
 	printf("prcmthr main start\n");
@@ -335,7 +334,7 @@ int main(int argc, char **argv)
 	}
 	// 작업 환경 정리
 	ClearEnv();
-	*/
+	
 	printf("prcmthr main end\n");
 	return (0);
 	

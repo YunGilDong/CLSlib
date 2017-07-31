@@ -23,6 +23,7 @@
 #define PRC_TEST01_PROCESS	"/home/ygd/test/work/GD/CLSlib/bin/PRC_TEST01"
 #define PRC_THR_PROCESS		"/home/ygd/test/work/GD/CLSlib/bin/PRC_THR"
 #define PRC_THRC_PROCESS	"/home/ygd/test/work/GD/CLSlib/bin/PRC_THRC"
+#define PRC_MTHR_PROCESS	"/home/ygd/test/work/GD/CLSlib/bin/PRC_MTHR"
 //------------------------------------------------------------------------------
 #endif	// CLSMAINH
 //------------------------------------------------------------------------------

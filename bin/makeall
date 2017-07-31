@@ -22,6 +22,10 @@ cd /home/ygd/test/work/GD/CLSlib/src/PRC_THRC
 make clean
 make
 
+cd /home/ygd/test/work/GD/CLSlib/src/PRC_MTHR
+make clean
+make
+
 cd /home/ygd/test/work/GD/CLSlib/src/CLI
 make clean
 make

@@ -83,7 +83,8 @@ bool CLSprocess::IsRunning(RUN_STATE *state)
 void CLSprocess::Kill(void)
 {
 	Debug(1,"Kill[%d]", ID);
-	kill(ID, SIGKILL);
+	//kill(ID, SIGKILL);
+	kill(ID, SIGTERM);
 }
 //------------------------------------------------------------------------------
 // RequestLevel

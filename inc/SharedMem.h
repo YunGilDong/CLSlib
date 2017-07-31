@@ -22,7 +22,8 @@
 #define PRC_TEST01			PRC_CLSMAIN+1
 #define PRC_THR				PRC_TEST01+1
 #define PRC_THRC			PRC_THR+1
-#define MAX_PROCESS			PRC_THRC+1
+#define PRC_MTHR			PRC_THRC+1
+#define MAX_PROCESS			PRC_MTHR+1
 //------------------------------------------------------------------------------
 // SHARED_MEM
 //------------------------------------------------------------------------------

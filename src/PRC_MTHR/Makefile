@@ -51,8 +51,8 @@ default:	$(TARGET)
 
 $(TARGET) : $(OBJS)
 	$(LINK) $(OBJS) $(LIBS) -o $@
-	#@mv $@ $(WORK_BIN)
-	#@rm -rf core $(TARGET) $(OBJS)
+	@mv $@ $(WORK_BIN)
+	@rm -rf core $(TARGET) $(OBJS)
 
 clean :
 	rm -rf $(WORK_BIN)$(TARGET) $(OBJS) $(TARGET)

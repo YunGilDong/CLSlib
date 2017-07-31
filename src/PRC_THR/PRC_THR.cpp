@@ -33,6 +33,7 @@ CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 void SigHandler(int sig)
 {
 	Log.Debug("Signal %d accepted", sig);
+	Log.Write("Signal %d accepted", sig);
 	switch (sig)
 	{
 	case SIGTERM:	// 15
@@ -101,7 +102,9 @@ bool InitThread(void)
 //------------------------------------------------------------------------------
 void TerminateThread(void)
 {
+	Log.Write(1, "TerminateThread..[1]");
 	ThrObj.Kill();
+	Log.Write(1, "TerminateThread[2]");
 }
 //------------------------------------------------------------------------------
 // InitPRCTHR
@@ -179,10 +182,12 @@ bool InitEnv(int argc, char **argv)
 //------------------------------------------------------------------------------
 void ClearEnv(void)
 {
+	Log.Write(1, "ClearEnv..[1]");
 	TerminateThread();		// Terminate thread
 	ShmPrc->Deregister(getpid());	// Deregister process
 	ShmMemory.Detach();				// Detach shared memory
-	Log.Write("Process terminate [%d]", getpid());
+	Log.Write(1, "ClearEnv[2]");
+	Log.Write("Process terminate [%d]", getpid());	
 	exit(0);
 }
 //------------------------------------------------------------------------------
