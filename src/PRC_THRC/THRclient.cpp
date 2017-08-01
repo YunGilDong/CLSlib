@@ -101,7 +101,7 @@ void *THRclient(void *data)
 		// 立加 包府
 		if (!TCLmanage())
 			break;
-		Log.Debug("THRclient run");
+		//Log.Debug("THRclient run");
 		ThrClient.UpdateRunInfo();	// 角青 沥焊 盎脚
 		ThrClient.Pause(1000);		// 10 msec
 	}

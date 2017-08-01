@@ -14,6 +14,13 @@ typedef struct
 	char address[IPADDR_LEN];
 }MTHR_MNG;
 //------------------------------------------------------------------------------
+// TEST
+//------------------------------------------------------------------------------
+typedef struct
+{
+	int val;
+}MTHR_OPR;
+//------------------------------------------------------------------------------
 // Class
 //------------------------------------------------------------------------------
 class CLSprcmthr : public CLSobject
@@ -25,6 +32,7 @@ public:
 	bool Active;
 	CLSthreadC *Thread;
 	MTHR_MNG Mng;
+	MTHR_OPR Opr;
 
 	CLSprcmthr(void);
 	~CLSprcmthr(void);

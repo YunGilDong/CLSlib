@@ -200,7 +200,10 @@ void TerminateThread(void)
 		else if ((pThread = ptr->Thread) == NULL)
 			++it;
 		else if (pThread->IsExist())
+		{
 			pThread->Kill();
+			Log.Write("#Client thread kill#");
+		}
 		else
 		{
 			delete pThread;

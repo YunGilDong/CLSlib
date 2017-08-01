@@ -13,7 +13,7 @@ extern bool NeedTerminate(void);
 //------------------------------------------------------------------------------
 // Prototype
 //------------------------------------------------------------------------------
-void TCLclearEvn(CLSprcmthr *);
+void TCLclearEnv(CLSprcmthr *);
 //------------------------------------------------------------------------------
 // Global Variable
 //------------------------------------------------------------------------------
@@ -25,7 +25,14 @@ void TCLclearEvn(CLSprcmthr *);
 //------------------------------------------------------------------------------
 void TCLsigHandler(CLSprcmthr *ptr, int sig)
 {
-	
+	Log.Write("Client signal %d accepted", sig);
+	switch (sig)
+	{
+	case SIGPIPE:
+	case SIGUSR1:
+	case SIGSEGV: TCLclearEnv(ptr);	break;
+	default:	break;
+	}
 }
 //------------------------------------------------------------------------------
 // TCLinitNetwork
@@ -39,21 +46,42 @@ bool TCLinitNetwork(CLSprcmthr *info)
 //------------------------------------------------------------------------------
 void TCLinitSignal(void)
 {
+	sigset_t newMask;
+	struct sigaction act;
 
+	// Signal 처리기 초기화
+	sigemptyset(&newMask);		// signal set clear
+	sigaddset(&newMask, SIGSEGV);
+	sigaddset(&newMask, SIGHUP);
+	sigaddset(&newMask, SIGCLD);
+	sigaddset(&newMask, SIGPIPE);
+	sigaddset(&newMask, SIGUSR1);
+	pthread_sigmask(SIG_UNBLOCK, &newMask, NULL);
+	act.sa_handler = THRsigHandler;
+	sigaction(SIGSEGV, &act, NULL);
+	sigaction(SIGHUP, &act, NULL);
+	sigaction(SIGCLD, &act, NULL);
+	sigaction(SIGPIPE, &act, NULL);
+	sigaction(SIGUSR1, &act, NULL);
 }
 //------------------------------------------------------------------------------
 // TCLinitEnv
 //------------------------------------------------------------------------------
 bool TCLinitEnv(CLSprcmthr *pMTHR)
 {
+	pthread_detach(pthread_self());
+	TCLinitSignal();		// Signal 처리기 초기화
 
+	return (true);
 }
 //------------------------------------------------------------------------------
 // TCLSclearEnv
 //------------------------------------------------------------------------------
 void TCLclearEnv(CLSprcmthr *pMTHR)
 {
-
+	// Terminate thread
+	if (pMTHR->Thread != NULL)
+		pMTHR->Thread->Stop();
 }
 //------------------------------------------------------------------------------
 // THRclient
@@ -71,7 +99,7 @@ void *THRclient(void *data)
 
 	while (initOK)
 	{
-		printf("#THRclient RUN#");
+		Log.Debug("#THRclient RUN#");
 		pThread->MarkTime();
 
 		pThread->UpdateRunInfo();	// 실행 정보 갱신
