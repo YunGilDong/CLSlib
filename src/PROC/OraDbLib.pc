@@ -1,0 +1,76 @@
+//------------------------------------------------------------------------------
+// Include
+//------------------------------------------------------------------------------
+#include "OraDbLib.h"
+//------------------------------------------------------------------------------
+// Local Variable
+//------------------------------------------------------------------------------
+EXEC ORACLE OPTION(ORACA = YES);		// oraca를 사용하기 위함
+EXEC ORACLE OPTION(RELEASE_CURSOR = YES);	// Control release of cursors from cursor cache
+//------------------------------------------------------------------------------
+// DBaseError
+//------------------------------------------------------------------------------
+void DBaseError(void)
+{
+	char msgbuf[512];
+	size_t msgbuf_len, msg_len;
+
+	EXEC SQL WHENEVER SQLERROR CONTINUE;
+	msgbuf_len = sizeof(msgbuf);
+	sqlglm(msgbuf, &msgbuf_len, &msg_len);
+	msgbuf[msg_len] = '\0';
+	printf("ORA_DB ERROR: [%d] %s", sqlca.sqlcode, msgbuf);
+	EXEC SQL ROLLBACK RELEASE;
+	return;
+}
+//------------------------------------------------------------------------------
+// fnSqlError
+//------------------------------------------------------------------------------
+intfnSqlError(const char *funcName)
+{
+	char msg[200];
+	size_t bufLen, msgLen;
+
+	bufLen = sizeof(msg);	
+	sqlglm(msg, &bufLen, &msgLen);	
+#if 1
+	printf("[%s] CODE:%d %.*s", funcName, sqlca.sqlcode, msgLen, msg);
+#endif
+	
+	return (sqlca.sqlcode);
+}
+//------------------------------------------------------------------------------
+// DBaseConnect
+//------------------------------------------------------------------------------
+int DBaseConnect(const char *user, const char *pwd, const char *alias)
+{
+	oraca.orastxtf = ORASTFERR;	// Only save on SQLERROR (val : 1)
+	EXEC SQL WHENEVER SQLERROR DO DBaseError();
+	EXEC SQL WHENEVER NOT FOUND CONTINUE;
+	EXEC SQL CONNECT :user IDENTIFIED BY :pwd USING :alias;
+	return ((sqlca.sqlcode < 0) ? -1 : 0);
+}
+//------------------------------------------------------------------------------
+// DBaseDisconnect
+//------------------------------------------------------------------------------ 
+int DBaseDisconnect(void)
+{
+	EXEC SQL COMMIT WORK RELEASE;
+	return ((sqlca.sqlcode < 0)? -1 : 0);
+}
+//------------------------------------------------------------------------------ 
+// DBGenDate
+//------------------------------------------------------------------------------ 
+/*
+void DBGenDate(time_t clock, char *pDate)
+{
+	struct tm *pTOD;
+
+	pTOD = localtime(&clock);
+	sprintf(pDate, "%04d%02d%02d%02d%02d%02d",
+		pTOD->tm_year + 1900, pTOD->tm_mon + 1, pTOD->tm_mday, pTOD->tm_hour, pTOD->tm_min, pTOD->tm_sec);
+}
+*/
+//------------------------------------------------------------------------------ 
+// End of OraDbLib.pc
+//------------------------------------------------------------------------------ 
