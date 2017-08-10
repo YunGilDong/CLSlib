@@ -128,6 +128,10 @@ static int IAPFAIL = 1403;
 static int IAPFTL  = 535;
 extern void sqliem(/*_ unsigned char *, signed int * _*/);
 
+ static char *sq0004 = 
+"select ISPT_EQUIP_ID ,ISPT_EQUIP_NM ,ISPT_EQUIP_TP  from ISPT_EQUIP  order b\
+y ISPT_EQUIP_ID            ";
+
 typedef struct { unsigned short len; unsigned char arr[1]; } VARCHAR;
 typedef struct { unsigned short len; unsigned char arr[1]; } varchar;
 
@@ -137,6 +141,9 @@ static short sqlcud0[] =
 5,0,0,1,0,0,544,23,0,0,0,0,0,1,0,
 20,0,0,0,0,0,539,50,0,0,4,4,0,1,0,1,5,0,0,1,5,0,0,1,5,0,0,1,10,0,0,
 51,0,0,3,0,0,542,58,0,0,0,0,0,1,0,
+66,0,0,4,103,0,521,87,0,0,0,0,0,1,0,
+81,0,0,4,0,0,525,90,0,0,3,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,
+108,0,0,4,0,0,527,97,0,0,0,0,0,1,0,
 };
 
 
@@ -302,7 +309,6 @@ int DBaseDisconnect(void)
 //------------------------------------------------------------------------------ 
 // DBGenDate
 //------------------------------------------------------------------------------ 
-/*
 void DBGenDate(time_t clock, char *pDate)
 {
 	struct tm *pTOD;
@@ -311,7 +317,133 @@ void DBGenDate(time_t clock, char *pDate)
 	sprintf(pDate, "%04d%02d%02d%02d%02d%02d",
 		pTOD->tm_year + 1900, pTOD->tm_mon + 1, pTOD->tm_mday, pTOD->tm_hour, pTOD->tm_min, pTOD->tm_sec);
 }
-*/
+//------------------------------------------------------------------------------ 
+// DBSelectTest
+//------------------------------------------------------------------------------ 
+int DBSelectTest(TEST_DB *pInfo, int maxEntry)
+{
+	int count = 0;
+	/* EXEC SQL BEGIN DECLARE SECTION; */ 
+
+		TEST_DB *ptr = pInfo;
+	/* EXEC SQL END DECLARE SECTION; */ 
+
+
+	/* EXEC SQL DECLARE csTEST CURSOR FOR
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP
+		FROM ISPT_EQUIP
+		ORDER BY ISPT_EQUIP_ID; */ 
+
+
+	/* EXEC SQL OPEN csTEST; */ 
+
+{
+ struct sqlexd sqlstm;
+ sqlorat((void **)0, &sqlctx, &oraca);
+ sqlstm.sqlvsn = 12;
+ sqlstm.arrsiz = 4;
+ sqlstm.sqladtp = &sqladt;
+ sqlstm.sqltdsp = &sqltds;
+ sqlstm.stmt = sq0004;
+ sqlstm.iters = (unsigned int  )1;
+ sqlstm.offset = (unsigned int  )66;
+ sqlstm.selerr = (unsigned short)1;
+ sqlstm.cud = sqlcud0;
+ sqlstm.sqlest = (unsigned char  *)&sqlca;
+ sqlstm.sqlety = (unsigned short)4352;
+ sqlstm.occurs = (unsigned int  )0;
+ sqlstm.sqcmod = (unsigned int )0;
+ sqlcxt((void **)0, &sqlctx, &sqlstm, &sqlfpn);
+ if (sqlca.sqlcode < 0) DBaseError();
+}
+
+
+	for(count = 0; count < maxEntry; ptr++)
+	{
+		/* EXEC SQL FETCH csTEST INTO :ptr; */ 
+
+{
+  struct sqlexd sqlstm;
+  sqlorat((void **)0, &sqlctx, &oraca);
+  sqlstm.sqlvsn = 12;
+  sqlstm.arrsiz = 4;
+  sqlstm.sqladtp = &sqladt;
+  sqlstm.sqltdsp = &sqltds;
+  sqlstm.iters = (unsigned int  )1;
+  sqlstm.offset = (unsigned int  )81;
+  sqlstm.selerr = (unsigned short)1;
+  sqlstm.cud = sqlcud0;
+  sqlstm.sqlest = (unsigned char  *)&sqlca;
+  sqlstm.sqlety = (unsigned short)4352;
+  sqlstm.occurs = (unsigned int  )0;
+  sqlstm.sqfoff = (         int )0;
+  sqlstm.sqfmod = (unsigned int )2;
+  sqlstm.sqhstv[0] = (unsigned char  *)&ptr->ISPT_EQUIP_ID;
+  sqlstm.sqhstl[0] = (unsigned long )sizeof(int);
+  sqlstm.sqhsts[0] = (         int  )0;
+  sqlstm.sqindv[0] = (         short *)0;
+  sqlstm.sqinds[0] = (         int  )0;
+  sqlstm.sqharm[0] = (unsigned long )0;
+  sqlstm.sqadto[0] = (unsigned short )0;
+  sqlstm.sqtdso[0] = (unsigned short )0;
+  sqlstm.sqhstv[1] = (unsigned char  *)ptr->ISPT_EQUIP_NM;
+  sqlstm.sqhstl[1] = (unsigned long )32;
+  sqlstm.sqhsts[1] = (         int  )0;
+  sqlstm.sqindv[1] = (         short *)0;
+  sqlstm.sqinds[1] = (         int  )0;
+  sqlstm.sqharm[1] = (unsigned long )0;
+  sqlstm.sqadto[1] = (unsigned short )0;
+  sqlstm.sqtdso[1] = (unsigned short )0;
+  sqlstm.sqhstv[2] = (unsigned char  *)&ptr->ISPT_EQUIP_TP;
+  sqlstm.sqhstl[2] = (unsigned long )sizeof(int);
+  sqlstm.sqhsts[2] = (         int  )0;
+  sqlstm.sqindv[2] = (         short *)0;
+  sqlstm.sqinds[2] = (         int  )0;
+  sqlstm.sqharm[2] = (unsigned long )0;
+  sqlstm.sqadto[2] = (unsigned short )0;
+  sqlstm.sqtdso[2] = (unsigned short )0;
+  sqlstm.sqphsv = sqlstm.sqhstv;
+  sqlstm.sqphsl = sqlstm.sqhstl;
+  sqlstm.sqphss = sqlstm.sqhsts;
+  sqlstm.sqpind = sqlstm.sqindv;
+  sqlstm.sqpins = sqlstm.sqinds;
+  sqlstm.sqparm = sqlstm.sqharm;
+  sqlstm.sqparc = sqlstm.sqharc;
+  sqlstm.sqpadto = sqlstm.sqadto;
+  sqlstm.sqptdso = sqlstm.sqtdso;
+  sqlcxt((void **)0, &sqlctx, &sqlstm, &sqlfpn);
+  if (sqlca.sqlcode < 0) DBaseError();
+}
+
+
+		if (sqlca.sqlcode == 1403)
+			break;
+		
+		printf("ID:[%d] NM:[%s] TP:[%d]", ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP);
+		count++;
+	}
+	/* EXEC SQL CLOSE csTEST; */ 
+
+{
+ struct sqlexd sqlstm;
+ sqlorat((void **)0, &sqlctx, &oraca);
+ sqlstm.sqlvsn = 12;
+ sqlstm.arrsiz = 4;
+ sqlstm.sqladtp = &sqladt;
+ sqlstm.sqltdsp = &sqltds;
+ sqlstm.iters = (unsigned int  )1;
+ sqlstm.offset = (unsigned int  )108;
+ sqlstm.cud = sqlcud0;
+ sqlstm.sqlest = (unsigned char  *)&sqlca;
+ sqlstm.sqlety = (unsigned short)4352;
+ sqlstm.occurs = (unsigned int  )0;
+ sqlcxt((void **)0, &sqlctx, &sqlstm, &sqlfpn);
+ if (sqlca.sqlcode < 0) DBaseError();
+}
+
+
+	return (count);
+}
 //------------------------------------------------------------------------------ 
 // End of OraDbLib.pc
 //------------------------------------------------------------------------------ 

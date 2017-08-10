@@ -61,7 +61,6 @@ int DBaseDisconnect(void)
 //------------------------------------------------------------------------------ 
 // DBGenDate
 //------------------------------------------------------------------------------ 
-/*
 void DBGenDate(time_t clock, char *pDate)
 {
 	struct tm *pTOD;
@@ -70,7 +69,34 @@ void DBGenDate(time_t clock, char *pDate)
 	sprintf(pDate, "%04d%02d%02d%02d%02d%02d",
 		pTOD->tm_year + 1900, pTOD->tm_mon + 1, pTOD->tm_mday, pTOD->tm_hour, pTOD->tm_min, pTOD->tm_sec);
 }
-*/
+//------------------------------------------------------------------------------ 
+// DBSelectTest
+//------------------------------------------------------------------------------ 
+int DBSelectTest(TEST_DB *pInfo, int maxEntry)
+{
+	int count = 0;
+	EXEC SQL BEGIN DECLARE SECTION;
+		TEST_DB *ptr = pInfo;
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL DECLARE csTEST CURSOR FOR
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP
+		FROM ISPT_EQUIP
+		ORDER BY ISPT_EQUIP_ID;
+
+	EXEC SQL OPEN csTEST;
+	for(count = 0; count < maxEntry; ptr++)
+	{
+		EXEC SQL FETCH csTEST INTO :ptr;
+		if (sqlca.sqlcode == 1403)
+			break;
+		
+		printf("ID:[%d] NM:[%s] TP:[%d]", ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP);
+		count++;
+	}
+	EXEC SQL CLOSE csTEST;
+	return (count);
+}
 //------------------------------------------------------------------------------ 
 // End of OraDbLib.pc
 //------------------------------------------------------------------------------ 

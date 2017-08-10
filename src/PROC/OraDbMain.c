@@ -14,6 +14,9 @@ bool initEnv()
 		return (false);
 	}
 	printf("Database connect success\n");
+
+	TEST_DB info[3];
+	DBSelectTest(info, 3);
 	return (true);
 }
 //------------------------------------------------------------------------------

@@ -4,6 +4,9 @@
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
+#include "General.h"
+#include "Database.h"
+//------------------------------------------------------------------------------
 #include <stdio.h>
 #include <string.h>
 #include <sqlca.h>
@@ -20,7 +23,8 @@ extern "C" {
 
 	int DBaseConnect(const char *user, const char *pwd, const char *alias);
 	int DBaseDisconnect(void);
-	
+	int DBSelectTest(TEST_DB *pInfo, int maxEntry);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

@@ -59,7 +59,7 @@ OraDbLib.c:	OraDbLib.pc
 	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=cpp parse=partial iname=OraDbLib.pc oname=OraDbLib.c
 
 main:
-	@gcc -c OraDbMain.c -I$(ORA_INC)
+	@gcc -c OraDbMain.c -I$(ORA_INC) -I$(WORK_INC) 
 	#$(CC) OraDbMain.c -L$(ORA_LIB) -o OraDbMain
 	#@gcc -L$(ORA_LIB) -L$(WORK_LIB2) OraDbMain.o $(LIBS) -o OraDbMain
 	$(LINK) OraDbMain.o $(LIBS) -o OraDbMain

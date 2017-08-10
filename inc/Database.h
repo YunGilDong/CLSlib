@@ -37,6 +37,16 @@ typedef struct
 } DB_PRCMTHR;
 #define DB_PRCMTHR_SIZE		sizeof(DB_PRCMTHR);
 //------------------------------------------------------------------------------
+// TEST_DB
+//------------------------------------------------------------------------------
+typedef struct
+{
+	int ISPT_EQUIP_ID;
+	char ISPT_EQUIP_NM[32];
+	int ISPT_EQUIP_TP;
+}TEST_DB;
+#define TEST_DB_SIZE	sizeof(TEST_DB);
+//------------------------------------------------------------------------------
 #endif	//DatabaseH
 //------------------------------------------------------------------------------
 // End of Database.h
