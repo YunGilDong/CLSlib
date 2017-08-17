@@ -42,8 +42,9 @@ typedef struct
 typedef struct
 {
 	int ISPT_EQUIP_ID;
-	char ISPT_EQUIP_NM[32];
+	char ISPT_EQUIP_NM[60];
 	int ISPT_EQUIP_TP;
+	char ISPT_OFFICE_ID[8];
 }TEST_DB;
 #define TEST_DB_SIZE	sizeof(TEST_DB);
 //------------------------------------------------------------------------------

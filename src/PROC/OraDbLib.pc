@@ -74,24 +74,33 @@ void DBGenDate(time_t clock, char *pDate)
 //------------------------------------------------------------------------------ 
 int DBSelectTest(TEST_DB *pInfo, int maxEntry)
 {
+	printf("DBSelectTest[0]\n");
 	int count = 0;
+	char *strPtr;
+	int i=0;
 	EXEC SQL BEGIN DECLARE SECTION;
 		TEST_DB *ptr = pInfo;
 	EXEC SQL END DECLARE SECTION;
 
+	printf("DBSelectTest[1]\n");
+
 	EXEC SQL DECLARE csTEST CURSOR FOR
-		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, ISPT_OFFICE_ID
 		FROM ISPT_EQUIP
 		ORDER BY ISPT_EQUIP_ID;
+
+	printf("DBSelectTest[2]\n");
 
 	EXEC SQL OPEN csTEST;
 	for(count = 0; count < maxEntry; ptr++)
 	{
 		EXEC SQL FETCH csTEST INTO :ptr;
 		if (sqlca.sqlcode == 1403)
-			break;
+			break;			
 		
-		printf("ID:[%d] NM:[%s] TP:[%d]", ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP);
+		printf("ID:[%d] NM:[%.*s] TP:[%d] OFFICE_ID:[%s] sizenm:[%d]\n"
+			,ptr->ISPT_EQUIP_ID, strlen(ptr->ISPT_EQUIP_NM), ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID, strlen(ptr->ISPT_EQUIP_NM));
+		
 		count++;
 	}
 	EXEC SQL CLOSE csTEST;

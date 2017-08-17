@@ -129,21 +129,21 @@ static int IAPFTL  = 535;
 extern void sqliem(/*_ unsigned char *, signed int * _*/);
 
  static char *sq0004 = 
-"select ISPT_EQUIP_ID ,ISPT_EQUIP_NM ,ISPT_EQUIP_TP  from ISPT_EQUIP  order b\
-y ISPT_EQUIP_ID            ";
+"select ISPT_EQUIP_ID ,ISPT_EQUIP_NM ,ISPT_EQUIP_TP ,ISPT_OFFICE_ID  from IS\
+PT_EQUIP  order by ISPT_EQUIP_ID            ";
 
 typedef struct { unsigned short len; unsigned char arr[1]; } VARCHAR;
 typedef struct { unsigned short len; unsigned char arr[1]; } varchar;
 
 /* CUD (Compilation Unit Data) Array */
 static short sqlcud0[] =
-{12,4274,1,0,0,
+{12,4274,846,0,0,
 5,0,0,1,0,0,544,23,0,0,0,0,0,1,0,
 20,0,0,0,0,0,539,50,0,0,4,4,0,1,0,1,5,0,0,1,5,0,0,1,5,0,0,1,10,0,0,
 51,0,0,3,0,0,542,58,0,0,0,0,0,1,0,
-66,0,0,4,103,0,521,87,0,0,0,0,0,1,0,
-81,0,0,4,0,0,525,90,0,0,3,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,
-108,0,0,4,0,0,527,97,0,0,0,0,0,1,0,
+66,0,0,4,119,0,521,94,0,0,0,0,0,1,0,
+81,0,0,4,0,0,525,97,0,0,4,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,
+112,0,0,4,0,0,527,106,0,0,0,0,0,1,0,
 };
 
 
@@ -322,18 +322,25 @@ void DBGenDate(time_t clock, char *pDate)
 //------------------------------------------------------------------------------ 
 int DBSelectTest(TEST_DB *pInfo, int maxEntry)
 {
+	printf("DBSelectTest[0]\n");
 	int count = 0;
+	char *strPtr;
+	int i=0;
 	/* EXEC SQL BEGIN DECLARE SECTION; */ 
 
 		TEST_DB *ptr = pInfo;
 	/* EXEC SQL END DECLARE SECTION; */ 
 
 
+	printf("DBSelectTest[1]\n");
+
 	/* EXEC SQL DECLARE csTEST CURSOR FOR
-		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, ISPT_OFFICE_ID
 		FROM ISPT_EQUIP
 		ORDER BY ISPT_EQUIP_ID; */ 
 
+
+	printf("DBSelectTest[2]\n");
 
 	/* EXEC SQL OPEN csTEST; */ 
 
@@ -387,7 +394,7 @@ int DBSelectTest(TEST_DB *pInfo, int maxEntry)
   sqlstm.sqadto[0] = (unsigned short )0;
   sqlstm.sqtdso[0] = (unsigned short )0;
   sqlstm.sqhstv[1] = (unsigned char  *)ptr->ISPT_EQUIP_NM;
-  sqlstm.sqhstl[1] = (unsigned long )32;
+  sqlstm.sqhstl[1] = (unsigned long )60;
   sqlstm.sqhsts[1] = (         int  )0;
   sqlstm.sqindv[1] = (         short *)0;
   sqlstm.sqinds[1] = (         int  )0;
@@ -402,6 +409,14 @@ int DBSelectTest(TEST_DB *pInfo, int maxEntry)
   sqlstm.sqharm[2] = (unsigned long )0;
   sqlstm.sqadto[2] = (unsigned short )0;
   sqlstm.sqtdso[2] = (unsigned short )0;
+  sqlstm.sqhstv[3] = (unsigned char  *)ptr->ISPT_OFFICE_ID;
+  sqlstm.sqhstl[3] = (unsigned long )8;
+  sqlstm.sqhsts[3] = (         int  )0;
+  sqlstm.sqindv[3] = (         short *)0;
+  sqlstm.sqinds[3] = (         int  )0;
+  sqlstm.sqharm[3] = (unsigned long )0;
+  sqlstm.sqadto[3] = (unsigned short )0;
+  sqlstm.sqtdso[3] = (unsigned short )0;
   sqlstm.sqphsv = sqlstm.sqhstv;
   sqlstm.sqphsl = sqlstm.sqhstl;
   sqlstm.sqphss = sqlstm.sqhsts;
@@ -417,9 +432,11 @@ int DBSelectTest(TEST_DB *pInfo, int maxEntry)
 
 
 		if (sqlca.sqlcode == 1403)
-			break;
+			break;			
 		
-		printf("ID:[%d] NM:[%s] TP:[%d]", ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP);
+		printf("ID:[%d] NM:[%.*s] TP:[%d] OFFICE_ID:[%s] sizenm:[%d]\n"
+			,ptr->ISPT_EQUIP_ID, strlen(ptr->ISPT_EQUIP_NM), ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID, strlen(ptr->ISPT_EQUIP_NM));
+		
 		count++;
 	}
 	/* EXEC SQL CLOSE csTEST; */ 
@@ -432,7 +449,7 @@ int DBSelectTest(TEST_DB *pInfo, int maxEntry)
  sqlstm.sqladtp = &sqladt;
  sqlstm.sqltdsp = &sqltds;
  sqlstm.iters = (unsigned int  )1;
- sqlstm.offset = (unsigned int  )108;
+ sqlstm.offset = (unsigned int  )112;
  sqlstm.cud = sqlcud0;
  sqlstm.sqlest = (unsigned char  *)&sqlca;
  sqlstm.sqlety = (unsigned short)4352;

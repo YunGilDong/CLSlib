@@ -24,7 +24,7 @@ CC = gcc $(CCOPTS)
 CCP = g++ $(CCOPTS)
 PC = proc $(PCOPTS)
 AR = ar $(AROPTS)
-LINK = gcc $(LDOPTS)
+LINK = g++ $(LDOPTS)
 
 .c.o:	; $(CC) $<
 #
@@ -59,7 +59,7 @@ OraDbLib.c:	OraDbLib.pc
 	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=cpp parse=partial iname=OraDbLib.pc oname=OraDbLib.c
 
 main:
-	@gcc -c OraDbMain.c -I$(ORA_INC) -I$(WORK_INC) 
+	@g++ -c OraDbMain.cpp -I$(ORA_INC) -I$(WORK_INC) 
 	#$(CC) OraDbMain.c -L$(ORA_LIB) -o OraDbMain
 	#@gcc -L$(ORA_LIB) -L$(WORK_LIB2) OraDbMain.o $(LIBS) -o OraDbMain
 	$(LINK) OraDbMain.o $(LIBS) -o OraDbMain
@@ -68,7 +68,7 @@ mclean:
 	@rm -fr core OraDbMain.o OraDbMain
 
 clean:
-	@rm -fr core *.lis *.cud *.dcl *.cod tp* $(TARGET) $(OBJS) OraDbLib.c
+	@rm -fr core *.lis *.cud *.dcl *.cod tp* $(TARGET) $(OBJS) OraDbLib.c OraDbLib.cpp OraDbMain.o OraDbMain
 #
 # End of Makefile
 #
