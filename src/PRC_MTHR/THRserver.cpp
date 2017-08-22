@@ -205,7 +205,8 @@ void *THRserver(void *data)
 		// 立加 贸府
 		if (!TSVmanage())
 			break;
-		printf("##THRserver run##\n");
+		//printf("##[MTHR]THRserver run##\n");
+		Log.Debug("THRserver run");
 		ThrServer.UpdateRunInfo();		// 角青 沥焊 盎脚
 		ThrServer.Pause(500);			// 5 msec
 	}

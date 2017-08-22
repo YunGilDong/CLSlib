@@ -72,7 +72,7 @@ CLSequip *CLSmap::Get(pthread_t id)
 
 	for (it = Client.begin(); it != Client.end(); it++)
 	{
-		if ((ptr = it->second == NULL))
+		if ((ptr = it->second) == NULL)
 			continue;
 		if ((pThread = ptr->Thread) == NULL)
 			continue;
@@ -91,11 +91,6 @@ CLSequip *CLSmap::GetDB(int id)
 		return (NULL);
 
 	return (it->second);
-}
-int main()
-{
-	printf("hi\n");
-	return 0;
 }
 //------------------------------------------------------------------------------
 // End of CLSmap.cpp

@@ -6,8 +6,8 @@
 // External Variable
 //------------------------------------------------------------------------------
 extern void *THRserver(void *);
-//extern void TSVsigHandler(int);
-//extern void TCLsigHandler(CLSequip *, int);
+extern void TSVsigHandler(int);
+extern void TCLsigHandler(CLSequip *, int);
 //------------------------------------------------------------------------------
 // Prototype
 //------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ CLSmap Map("CLMAP");
 //------------------------------------------------------------------------------
 bool Terminate = false;
 SHARED_MEM *ShmPtr = NULL;
-CLSsysterm *ShmSys = NULL;
+CLSsystem *ShmSys = NULL;
 CLSprocess *ShmPrc = NULL;
 struct timeval TMtimer;
 
@@ -51,6 +51,8 @@ void THRsigHandler(int sig)
 	pthread_t id = pthread_self();
 	CLSequip *ptr;
 
+	Log.Write(1, "Server Signal %d accepted", sig);
+
 	// Processserver thread signal
 	if (id == ThrServer.ID)
 	{
@@ -68,22 +70,21 @@ bool NeedTerminate(void)
 {
 	if (Terminate)
 		return (true);
-#ifdef YGD
 	if (ShmSys->Terminate)
 		return (true);
-#endif //1
+
 	return (false);
 }
 //------------------------------------------------------------------------------
 // DeleteClient
 //------------------------------------------------------------------------------
-void DeleteClient(CLSequip *pEqiup, int id)
+void DeleteClient(CLSequip *pEquip, int id)
 {
 	// Client 종료 요구
 	if (pEquip->Thread != NULL)
 		pEquip->Thread->Terminate = true;
 	// 종료 대기
-	for (int idx = 0; i < 5 && pEqiup->Thread->Active; idx++)
+	for (int idx = 0; idx < 5 && pEquip->Thread->Active; idx++)
 		usleep(5000);	// 5ms
 	pEquip->Delete();
 	Map.Erase(id);
@@ -114,7 +115,7 @@ void ManageThread(void)
 
 	// Manage server thread
 	ThrServer.Manage();
-
+/*
 	// Manage client thread
 	for (it = Map.Client.begin(); it != Map.Client.end();)
 	{
@@ -135,6 +136,7 @@ void ManageThread(void)
 			Map.Client.erase(it++);
 		}
 	}
+	*/
 }
 //------------------------------------------------------------------------------
 // ManageTest
@@ -223,7 +225,7 @@ bool InitEquip(void)
 	CLSequip *pEquip = ShmPtr->equip;
 
 	// DB Map
-	for (int idx = 0; idx < ShmSys->equip; idx++, pEquip++)
+	for (int idx = 0; idx < ShmSys->Equip; idx++, pEquip++)
 		Map.AddDB(pEquip->Mng.id, pEquip);
 }
 //------------------------------------------------------------------------------
@@ -241,8 +243,8 @@ bool InitMemory(void)
 	if ((ShmPtr = (SHARED_MEM *)ShmMemory.Attach()) == (void *)-1)
 		return (false);
 
-	ShmSys = &ShmPtr->Systerm;
-	ShmPrc = &ShmPtr->process[5];
+	ShmSys = &ShmPtr->system;
+	ShmPrc = &ShmPtr->process[PRC_CPVIMS];
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -253,7 +255,7 @@ void InitSignal(void)
 	signal(SIGQUIT, SigHandler);
 	signal(SIGINT, SigHandler);
 	signal(SIGTERM, SigHandler);
-	siganl(SIGKILL, SigHandler);
+	signal(SIGKILL, SigHandler);
 	signal(SIGABRT, SigHandler);
 	signal(SIGCLD, SigHandler);
 	signal(SIGPIPE, SigHandler);
@@ -271,6 +273,7 @@ bool InitEnv(int argc, char **argv)
 	Log.Write("Process start [%d]", getpid());
 
 	InitSignal();	// 시그널 처리기 초기화
+	Log.Write("Init Signal");
 	InitOption(argc, argv);		// 옵션 처리
 
 	// 공유메모리 초기화
@@ -279,17 +282,20 @@ bool InitEnv(int argc, char **argv)
 		Log.Write("Shared memory initialization fail");
 		return (false);
 	}
+	Log.Write("Init Memory");
 	// Thread 초기화
 	if (!InitThread())
 	{
 		Log.Write("Thread initialization fail");
 		return (false);
 	}
+	Log.Write("Init Thread");
 	
 	InitEquip();		// Equip 정보 초기화
-	InitDebug();		// Initialize debugging information
+	InitDebug();		// Initialize debugging information	
 	ShmPrc->Register(getpid());	// Register process
 	gettimeofday(&TMtimer, NULL);
+	Log.Write("Init Env");
 	return (true);
 }
 //------------------------------------------------------------------------------

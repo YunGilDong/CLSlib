@@ -8,11 +8,11 @@
 extern CLSlog Log;
 extern CLSmap Map;
 extern SHARED_MEM *ShmPtr;
-extern CLSthreadC *ThrServer;
+extern CLSthreadC ThrServer;
 
-extern DeleteClient(CLSequip *ptr, int id);
+extern void DeleteClient(CLSequip *ptr, int id);
 //extern void *THRclient(void *);
-extern THRsigHandler(int);
+extern void THRsigHandler(int);
 extern bool NeedTerminate(void);
 //------------------------------------------------------------------------------
 // Prototype
@@ -24,6 +24,11 @@ void TSVclearEnv(void);
 // Local Variable
 //------------------------------------------------------------------------------
 // CLStcp TcpServer("EQUIPSVTCP","TCP_SERVER_PORT, "")'
+
+void TCLsigHandler(CLSequip *, int)
+{
+
+}
 //------------------------------------------------------------------------------
 // TSVsigHandler
 //------------------------------------------------------------------------------
@@ -64,7 +69,7 @@ void TSVinitSignal(void)
 //------------------------------------------------------------------------------
 bool TSVinitEnv(void)
 {
-
+	return true;
 }
 //------------------------------------------------------------------------------
 // THRserver
@@ -83,5 +88,5 @@ void *THRserver(void *data)
 		ThrServer.UpdateRunInfo();	// 실행 정보 갱신
 		ThrServer.Pause(1000);		// 10 msec
 	}
-	TCLclearEnv();		// 작업 환경 정리
+	//TCLclearEnv();		// 작업 환경 정리
 }

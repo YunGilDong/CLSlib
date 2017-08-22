@@ -14,6 +14,7 @@ private:
 public:
 	int		PrcThrC;		// PrcThr 수
 	int		Prcmthr;		// Prcmthr 수
+	int		Equip;			// Equip 수
 	bool	Terminate;		// 시스템 종료 요구	
 
 	CLSsystem(void);

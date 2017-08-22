@@ -26,6 +26,10 @@ cd /home/ygd/test/work/GD/CLSlib/src/PRC_MTHR
 make clean
 make
 
+cd /home/ygd/test/work/GD/CLSlib/src/CPVIMS
+make clean
+make
+
 cd /home/ygd/test/work/GD/CLSlib/src/CLI
 make clean
 make

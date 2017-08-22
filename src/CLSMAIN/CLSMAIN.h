@@ -24,6 +24,7 @@
 #define PRC_THR_PROCESS		"/home/ygd/test/work/GD/CLSlib/bin/PRC_THR"
 #define PRC_THRC_PROCESS	"/home/ygd/test/work/GD/CLSlib/bin/PRC_THRC"
 #define PRC_MTHR_PROCESS	"/home/ygd/test/work/GD/CLSlib/bin/PRC_MTHR"
+#define CPVIMS_PROCESS		"/home/ygd/test/work/GD/CLSlib/bin/CPVIMS"
 //------------------------------------------------------------------------------
 #endif	// CLSMAINH
 //------------------------------------------------------------------------------

@@ -23,7 +23,8 @@ PRC_DESC PrcDesc[MAX_PROCESS] = {
 				{"PRC_TEST01",PRC_TEST01_PROCESS },
 				{"PRC_THR",PRC_THR_PROCESS },
 				{"PRC_THRC",PRC_THRC_PROCESS },
-				{"PRC_MTHR",PRC_MTHR_PROCESS }
+				{"PRC_MTHR",PRC_MTHR_PROCESS },
+				{"CPVIMS",CPVIMS_PROCESS }
 			};
 
 //------------------------------------------------------------------------------
