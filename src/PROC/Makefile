@@ -51,8 +51,8 @@ all:	$(TARGET)
 
 $(TARGET):	$(OBJS)
 	$(AR) $@ $(OBJS)
-	#@mv $@ $(WORK_LIB)
-	#@rm -fr core $(TARGET) $(OBJS) tp*
+	@mv $@ $(WORK_LIB)
+	@rm -fr core $(TARGET) $(OBJS) tp*
 
 OraDbLib.c:	OraDbLib.pc
 	$(PC) mode=oracle dbms=v8 unsafe_null=yes char_map=string iname=OraDbLib.pc oname=OraDbLib.c 

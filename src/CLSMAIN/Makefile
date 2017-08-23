@@ -5,9 +5,12 @@
 #
 # Environment
 #
-WORK_INC =  $(WORK_HOME)/inc/
-WORK_LIB =  $(WORK_HOME)/lib/
-WORK_BIN =  $(WORK_HOME)/bin/
+WORK_INC = $(WORK_HOME)/inc/
+PROC_INC = $(WORK_HOME)/src/PROC
+WORK_LIB = $(WORK_HOME)/lib/
+WORK_BIN = $(WORK_HOME)/bin/
+ORA_INC = $(ORACLE_INC)
+ORA_LIB = /usr/lib/oracle/11.2/client64/lib
 #
 
 
@@ -23,8 +26,8 @@ WORK_BIN =  $(WORK_HOME)/bin/
 # Rules
 #
 DEFINES =
-CCOPTS = -c -I$(WORK_INC)
-LDOPTS = $(DEFINES) -L$(WORK_LIB)
+CCOPTS = -c -I$(WORK_INC) -I$(PROC_INC) -I$(ORA_INC)
+LDOPTS = $(DEFINES) -L$(WORK_LIB) -L$(ORA_LIB)
 
 CC = g++ $(CCOPTS) $(DEFINES)
 LINK = g++ $(LDOPTS)
@@ -33,7 +36,7 @@ LINK = g++ $(LDOPTS)
 #
 # Libraries used for linking
 #
-LIBS = -pthread -lYgd -lSane
+LIBS = -pthread -lYgd -lSane -lOraDb -lclntsh
 #
 #
 # Object files

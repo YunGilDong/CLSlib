@@ -107,5 +107,34 @@ int DBSelectTest(TEST_DB *pInfo, int maxEntry)
 	return (count);
 }
 //------------------------------------------------------------------------------ 
+// DBGetEquip
+//------------------------------------------------------------------------------ 
+int DBGetEquip(DB_EQUIP *pInfo, int maxEntry)
+{
+	int count = 0;
+	
+	EXEC SQL BEGIN DECLARE SECTION;
+		DB_EQUIP *ptr = pInfo;
+	EXEC SQL END DECLARE SECTION;
+	
+	EXEC SQL DECLARE csEQUIP CURSOR FOR
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, INSTALL_DT, ISPT_LANE, ISPT_OFFICE_ID
+		FROM ISPT_EQUIP
+		ORDER BY ISPT_EQUIP_ID;
+	
+	EXEC SQL OPEN csEQUIP;
+	for (count = 0; count < maxEntry; ptr++)			
+	{
+		EXEC SQL FETCH csEQUIP INTO :ptr;
+		if (sqlca.sqlcode == 1403)
+			break;
+
+		count++;
+	}
+	EXEC SQL CLOSE csEQUIP;
+	return (count);
+}
+
+//------------------------------------------------------------------------------ 
 // End of OraDbLib.pc
 //------------------------------------------------------------------------------ 

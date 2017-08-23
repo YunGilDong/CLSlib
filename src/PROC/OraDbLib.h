@@ -5,6 +5,7 @@
 // Include
 //------------------------------------------------------------------------------
 #include "General.h"
+#include "Define.h"
 #include "Database.h"
 //------------------------------------------------------------------------------
 #include <stdio.h>
@@ -24,6 +25,7 @@ extern "C" {
 	int DBaseConnect(const char *user, const char *pwd, const char *alias);
 	int DBaseDisconnect(void);
 	int DBSelectTest(TEST_DB *pInfo, int maxEntry);
+	int DBGetEquip(DB_EQUIP *pInfo, int maxEntry);
 
 #ifdef __cplusplus
 }

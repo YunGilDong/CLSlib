@@ -18,14 +18,17 @@
 //------------------------------------------------------------------------------
 // Database
 //------------------------------------------------------------------------------
-#define	DB_USER				(char *)"tram"
-#define	DB_PASSWORD			(char *)"tram"
-#define	DB_ALIAS			(char *)"tram"
+//#define	DB_USER				(char *)"tram"
+//#define	DB_PASSWORD			(char *)"tram"
+//#define	DB_ALIAS			(char *)"tram"
+#define DB_USER (char *)"mios"
+#define DB_PWD	(char *)"mios"
+#define DB_ALIAS (char *)"MIOSLOC"
 //------------------------------------------------------------------------------
 #define	MAX_APPROACH		4
 #define	MAX_PRCTHRC			4
 #define	MAX_PRCMTHR			4
-#define	MAX_EQUIP			4
+#define	MAX_EQUIP			5
 //------------------------------------------------------------------------------
 // Directory
 //------------------------------------------------------------------------------

@@ -33,7 +33,7 @@ bool LoadPrcThrC(void)
 	return (true);
 }
 //------------------------------------------------------------------------------
-//
+// LoadPrcmthr
 //------------------------------------------------------------------------------
 bool LoadPrcmthr(void)
 {
@@ -61,6 +61,32 @@ bool LoadPrcmthr(void)
 	return (true);
 }
 //------------------------------------------------------------------------------
+// LoadEquip
+//------------------------------------------------------------------------------
+bool LoadEquip(void)
+{
+	DB_EQUIP info[MAX_EQUIP], *pInfo = info;
+	CLSequip *pEquip = ShmPtr->equip;
+	
+	// Get istp equip database
+	ShmSys->Equip = DBGetEquip(info, MAX_EQUIP);
+
+	// Initialize ispt equip information
+	Log.Debug(1, "Ispt equip database:");
+	for (int idx = 0; idx < ShmSys->Equip; idx++, pEquip++, pInfo++)
+	{
+		Log.Debug(1, "\t[%4d:%5d]  %.*s:%d:%.*s:%d:%.*s"
+			, idx
+			, pInfo->ISPT_EQUIP_ID, strlen(pInfo->ISPT_EQUIP_NM), pInfo->ISPT_EQUIP_NM
+			, pInfo->ISPT_EQUIP_TP, strlen(pInfo->INSTALL_DT), pInfo->INSTALL_DT
+			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID);
+
+		pEquip->Init(pInfo);
+		
+	}
+	return (true);
+}
+//------------------------------------------------------------------------------
 // LoadDatabase
 //------------------------------------------------------------------------------
 bool LoadDatabase(void)
@@ -77,6 +103,13 @@ bool LoadDatabase(void)
 	if (!LoadPrcmthr())
 	{
 		Log.Write("Prcmthr database initialization fail");
+		return (false);
+	}
+
+	// Initialize Ispt equip database
+	if (!LoadEquip())
+	{
+		Log.Write("Ispt equp database initialization fail");
 		return (false);
 	}
 

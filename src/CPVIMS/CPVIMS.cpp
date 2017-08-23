@@ -50,9 +50,8 @@ void THRsigHandler(int sig)
 {
 	pthread_t id = pthread_self();
 	CLSequip *ptr;
-
-	Log.Write(1, "Server Signal %d accepted", sig);
-
+	
+	Log.Write("Thread id [%d] sig [%d]", id, sig);
 	// Processserver thread signal
 	if (id == ThrServer.ID)
 	{
@@ -329,4 +328,5 @@ int main(int argc, char **argv)
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
 		ShmPrc->Pause(100);			// 100 msec
 	}
+	ClearEnv();
 }

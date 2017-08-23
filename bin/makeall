@@ -6,6 +6,10 @@ cd /home/ygd/test/work/GD/CLSlib/src/lib
 make clean
 make
 
+cd /home/ygd/test/work/GD/CLSlib/src/PROC
+make clean
+make
+
 cd /home/ygd/test/work/GD/CLSlib/src/CLSMAIN
 make clean
 make
