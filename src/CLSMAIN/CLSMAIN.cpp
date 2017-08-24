@@ -169,7 +169,15 @@ bool InitDatabase(void)
 {
 	bool loadOK;
 
-	loadOK = LoadDatabase();
+	// Connect database
+	if (DBaseConnect(DB_USER, DB_PWD, DB_ALIAS) < 0)
+	{
+		Log.Write(1, "Database connect fail");
+		return (false);
+	}
+
+	loadOK = LoadDatabase();	// Load database
+	DBaseDisconnect();			// Disconnect database
 	return (loadOK);
 }
 void InitDebug(void)

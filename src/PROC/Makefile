@@ -68,7 +68,7 @@ mclean:
 	@rm -fr core OraDbMain.o OraDbMain
 
 clean:
-	@rm -fr core *.lis *.cud *.dcl *.cod tp* $(TARGET) $(OBJS) OraDbLib.c OraDbLib.cpp OraDbMain.o OraDbMain
+	@rm -fr core $(WORK_LIB)$(TARGET) *.lis *.cud *.dcl *.cod tp* $(TARGET) $(OBJS) OraDbLib.c OraDbLib.cpp OraDbMain.o OraDbMain
 #
 # End of Makefile
 #

@@ -142,16 +142,16 @@ typedef struct { unsigned short len; unsigned char arr[1]; } varchar;
 /* CUD (Compilation Unit Data) Array */
 static short sqlcud0[] =
 {12,4274,846,0,0,
-5,0,0,1,0,0,544,23,0,0,0,0,0,1,0,
-20,0,0,0,0,0,539,50,0,0,4,4,0,1,0,1,5,0,0,1,5,0,0,1,5,0,0,1,10,0,0,
-51,0,0,3,0,0,542,58,0,0,0,0,0,1,0,
-66,0,0,4,119,0,521,94,0,0,0,0,0,1,0,
-81,0,0,4,0,0,525,97,0,0,4,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,
-112,0,0,4,0,0,527,106,0,0,0,0,0,1,0,
-127,0,0,5,142,0,521,125,0,0,0,0,0,1,0,
-142,0,0,5,0,0,525,128,0,0,6,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,2,3,0,0,2,
+5,0,0,1,0,0,544,55,0,0,0,0,0,1,0,
+20,0,0,0,0,0,539,85,0,0,4,4,0,1,0,1,5,0,0,1,5,0,0,1,5,0,0,1,10,0,0,
+51,0,0,3,0,0,542,93,0,0,0,0,0,1,0,
+66,0,0,4,119,0,521,145,0,0,0,0,0,1,0,
+81,0,0,4,0,0,525,148,0,0,4,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,
+112,0,0,4,0,0,527,157,0,0,0,0,0,1,0,
+127,0,0,5,142,0,521,176,0,0,0,0,0,1,0,
+142,0,0,5,0,0,525,179,0,0,6,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,2,3,0,0,2,
 5,0,0,
-181,0,0,5,0,0,527,134,0,0,0,0,0,1,0,
+181,0,0,5,0,0,527,185,0,0,0,0,0,1,0,
 };
 
 
@@ -167,19 +167,51 @@ static short sqlcud0[] =
 /* EXEC ORACLE OPTION(RELEASE_CURSOR = YES); */ 
 	// Control release of cursors from cursor cache
 //------------------------------------------------------------------------------
+// DBaseLogging
+//------------------------------------------------------------------------------
+void DBaseLogging(const char *msg)
+{
+	int length;
+	char filename[FILENAME_LEN];
+	char msgBuf[BUFFER_LEN];
+	char timeStamp[BUFFER_LEN];
+	FILE *fp;
+	struct tm tod;
+
+	printf("[0]\n");
+	//메시지 확인
+	if ((length = strlen(msg)) <= 0)
+		return ;
+	printf("[1]\n");
+	DBGetTimeString(&tod, timeStamp);
+	printf("[2]\n");
+	// 파일 저장
+	sprintf(msgBuf, "%s %s \n", timeStamp, msg);
+	sprintf(filename, "%sORA_%04d%02d%02d.log", DIR_LOG, tod.tm_year + 1900, tod.tm_mon + 1, tod.tm_mday);
+	printf("@%s\n", filename);
+	printf("@%s\n", msgBuf);
+	if ((fp = fopen(filename, "a+")) == NULL)
+		return;
+
+	printf("[3]\n");
+	fwrite(msgBuf, 1, strlen(msgBuf), fp);
+	fclose(fp);
+}
+//------------------------------------------------------------------------------
 // DBaseError
 //------------------------------------------------------------------------------
 void DBaseError(void)
-{
-	char msgbuf[512];
-	size_t msgbuf_len, msg_len;
-
+{	
+	char msgbuf[512];	
+	char msgbuf2[512];
+	size_t msgbuf_len, msg_len;	
+	
 	/* EXEC SQL WHENEVER SQLERROR CONTINUE; */ 
 
 	msgbuf_len = sizeof(msgbuf);
 	sqlglm(msgbuf, &msgbuf_len, &msg_len);
 	msgbuf[msg_len] = '\0';
-	printf("ORA_DB ERROR: [%d] %s", sqlca.sqlcode, msgbuf);
+	printf("ORA_DB ERROR: [%d] %s", sqlca.sqlcode, msgbuf);				
 	/* EXEC SQL ROLLBACK RELEASE; */ 
 
 {
@@ -198,7 +230,10 @@ void DBaseError(void)
  sqlcxt((void **)0, &sqlctx, &sqlstm, &sqlfpn);
 }
 
+		
 
+	sprintf(msgbuf2, "ORA_DB ERROR: [%d] %s", sqlca.sqlcode, msgbuf);				
+	DBaseLogging(msgbuf2);
 	return;
 }
 //------------------------------------------------------------------------------
@@ -312,6 +347,7 @@ int DBaseDisconnect(void)
 }
 
 
+	DBaseLogging("DB CLOSE");
 	return ((sqlca.sqlcode < 0)? -1 : 0);
 }
 //------------------------------------------------------------------------------ 
@@ -325,6 +361,21 @@ void DBGenDate(time_t clock, char *pDate)
 	sprintf(pDate, "%04d%02d%02d%02d%02d%02d",
 		pTOD->tm_year + 1900, pTOD->tm_mon + 1, pTOD->tm_mday, pTOD->tm_hour, pTOD->tm_min, pTOD->tm_sec);
 }
+//------------------------------------------------------------------------------
+// DBGetTimeString
+//------------------------------------------------------------------------------
+void DBGetTimeString(struct tm *pTod, char *m_timeStamp)
+{
+	//char m_timeStamp[BUFFER_LEN];
+	struct timeval timeVal;
+
+	gettimeofday(&timeVal, NULL);	//현재 시간
+	localtime_r(&timeVal.tv_sec, pTod);	//현재 시간(초)을 날짜 및 시간으로
+	sprintf(m_timeStamp, "%04d/%02d/%02d  %02d:%02d:%02d.%03d [ORA]",
+		pTod->tm_year + 1900, pTod->tm_mon + 1, pTod->tm_mday, pTod->tm_hour,
+		pTod->tm_min, pTod->tm_sec, timeVal.tv_usec / 1000);
+}
+
 //------------------------------------------------------------------------------ 
 // DBSelectTest
 //------------------------------------------------------------------------------ 
