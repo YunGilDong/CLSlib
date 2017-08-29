@@ -22,5 +22,8 @@ make clean
 cd /home/ygd/test/work/GD/CLSlib/src/PRC_MTHR
 make clean
 
+cd /home/ygd/test/work/GD/CLSlib/src/CPVIMS
+make clean
+
 cd /home/ygd/test/work/GD/CLSlib/src/CLI
 make clean

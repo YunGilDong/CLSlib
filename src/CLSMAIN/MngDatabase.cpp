@@ -65,6 +65,7 @@ bool LoadPrcmthr(void)
 //------------------------------------------------------------------------------
 bool LoadEquip(void)
 {
+	/*
 	DB_EQUIP info[MAX_EQUIP], *pInfo = info;
 	CLSequip *pEquip = ShmPtr->equip;
 	
@@ -84,6 +85,7 @@ bool LoadEquip(void)
 		pEquip->Init(pInfo);
 		
 	}
+	*/
 	return (true);
 }
 //------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 #include "SharedMem.h"
 #include "Database.h"
 #include "CLSlog.h"
-#include "OraDbLib.h"
+//#include "OraDbLib.h"
 //------------------------------------------------------------------------------
 #endif // !MngDatabaseH
 //------------------------------------------------------------------------------

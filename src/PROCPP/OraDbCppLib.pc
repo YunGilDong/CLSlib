@@ -1,0 +1,77 @@
+//------------------------------------------------------------------------------
+// Include
+//------------------------------------------------------------------------------
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <time.h>
+#include <sys/time.h>
+#include "General.h"
+#include "Database.h"
+#include <sqlca.h>
+#include <oraca.h>
+//------------------------------------------------------------------------------
+// Local
+//------------------------------------------------------------------------------
+EXEC ORACLE OPTION(ORACA = YES);			// oraca를 사용하기 위함
+EXEC ORACLE OPTION(RELEASE_CURSOR = YES);	// Control release of cursors from cursor cache
+//------------------------------------------------------------------------------
+// DBError
+//------------------------------------------------------------------------------
+void DBError(void)
+{
+	printf("%.*s\n", sqlca.sqlerrm.sqlerrml, sqlca.sqlerrm.sqlerrmc);
+	EXEC SQL WHENEVER SQLERROR CONTINUE;
+}
+//------------------------------------------------------------------------------
+// DBaseConnect_cpp
+//------------------------------------------------------------------------------
+int DBaseConnect_cpp(char *user, char *pwd, char *alias)
+{
+	EXEC SQL BEGIN DECLARE SECTION;
+		char *pUsername = user, *pPassword = pwd, *pAlias = alias;
+	EXEC SQL END DECLARE SECTION;
+
+	oraca.orastxtf = ORASTFERR;
+	EXEC SQL WHENEVER SQLERROR DO DBError();
+	EXEC SQL WHENEVER NOT FOUND CONTINUE;
+	EXEC SQL CONNECT :pUsername IDENTIFIED BY :pPassword USING :pAlias;
+	return ((sqlca.sqlcode < 0) ? -1 : 0);
+}
+//------------------------------------------------------------------------------
+// DBaseDisconnect_cpp
+//------------------------------------------------------------------------------
+int DBaseDisconnect_cpp(void)
+{
+	EXEC SQL COMMIT WORK RELEASE;
+	return ((sqlca.sqlcode < 0) ? 0 : 1);
+}
+//------------------------------------------------------------------------------ 
+// DBSelectTest_cpp
+//------------------------------------------------------------------------------ 
+int DBSelectTest_cpp(YGD_DB *pInfo, int maxEntry)
+{
+	printf("DBSelectTest[0]\n");
+	int count = 0;
+
+	EXEC SQL BEGIN DECLARE SECTION;
+		YGD_DB *ptr = pInfo;
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL DECLARE csTEST CURSOR FOR
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, ISPT_OFFICE_ID
+		FROM ISPT_EQUIP
+		ORDER BY ISPT_EQUIP_ID;
+
+	EXEC SQL OPEN csTEST;
+	for (count = 0; count < maxEntry; ptr++)
+	{
+		EXEC SQL FETCH csTEST INTO :ptr;
+		if (sqlca.sqlcode == 1403)
+			break;
+
+		count++;
+	}
+	EXEC SQL CLOSE csTEST;
+	return (count);
+}
