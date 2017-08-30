@@ -15,8 +15,8 @@ bool initEnv()
 	}
 	printf("Database connect success\n");
 
-	//TEST_DB info[3];
-	//DBSelectTest(info, 3);
+	//YGD_DB info[3];
+	//DBSelectTest_cpp(info, 3);
 	return (true);
 }
 //------------------------------------------------------------------------------

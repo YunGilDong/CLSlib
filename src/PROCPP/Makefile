@@ -10,6 +10,7 @@ WORK_LIB = $(WORK_HOME)/lib/
 WORK_LIB2 = /home/ygd/test/work/GD/CLSlib/src/PROCPP
 ORA_INC = $(ORACLE_INC)
 #ORA_LIB = $(ORACLE_HOME)/lib
+ORA_DBMS = $(ORACLE+HOME)/rdbms/public
 ORA_LIB = /usr/lib/oracle/11.2/client64/lib
 #
 # Rules
@@ -17,7 +18,7 @@ ORA_LIB = /usr/lib/oracle/11.2/client64/lib
 DEFINES =
 PCDEFINES = define=UNSUPPORT_BOOL define=HP_UX
 CCOPTS = -c $(DEFINES) -I$(WORK_INC) -I$(ORA_INC) -L$(ORA_LIB)
-PCOPTS = $(PCDEFINES) include=$(WORK_INC) include=$(ORACLE_INC) include=$(ORA_LIB)
+PCOPTS = $(PCDEFINES) include=$(WORK_INC) include=$(ORACLE_INC) include=$(ORA_DBMS) include=$(ORA_LIB)
 LDOPTS = $(DEFINES) -L$(WORK_LIB2) -L$(ORA_LIB)
 AROPTS = rcv
 
@@ -56,7 +57,7 @@ $(TARGET):	$(OBJS)
 OraDbCppLib.cpp:	OraDbCppLib.pc
 	#$(PC) mode=oracle dbms=v8 unsafe_null=yes char_map=string iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
 	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=cpp parse=partial iname=OraDbCppLib.pc oname=OraDbCppLib.cpp	
-	$(PC) dbms=v8 unsafe_null=yes char_map=string code=cpp parse=partial iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
+	$(PC) dbms=v8 unsafe_null=yes char_map=string code=ansi_c parse=full iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
 	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=ansi_c parse=full iname=OraDbLib.pc oname=OraDbLib.c
 
 main:
