@@ -60,9 +60,9 @@ typedef struct
 	char ISPT_EQUIP_NM[60];
 	int ISPT_EQUIP_TP;
 	char ISPT_OFFICE_ID[8];
-} YGD_DB;
+} DB_YGD;
 
-#define YGD_DB_SIZE	sizeof(YGD_DB);
+#define YGD_DB_SIZE	sizeof(DB_YGD);
 //------------------------------------------------------------------------------
 // DB_EQUIP
 //------------------------------------------------------------------------------

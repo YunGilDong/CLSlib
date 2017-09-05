@@ -56,12 +56,12 @@ $(TARGET):	$(OBJS)
 
 OraDbCppLib.cpp:	OraDbCppLib.pc
 	#$(PC) mode=oracle dbms=v8 unsafe_null=yes char_map=string iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
-	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=cpp parse=partial iname=OraDbCppLib.pc oname=OraDbCppLib.cpp	
-	$(PC) dbms=v8 unsafe_null=yes char_map=string code=ansi_c parse=full iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
+	$(PC) mode=ORACLE dbms=v8 unsafe_null=yes char_map=string CODE=CPP parse=partial iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
+	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=ansi_c parse=partial iname=OraDbCppLib.pc oname=OraDbCppLib.cpp
 	#$(PC) dbms=v8 unsafe_null=yes char_map=string code=ansi_c parse=full iname=OraDbLib.pc oname=OraDbLib.c
 
 main:
-	@g++ -c OraDbCppMain.cpp -I$(ORA_INC) -I$(WORK_INC)
+	@g++ -c OraDbCppMain.cpp -I$(ORA_INC) -I$(WORK_INC) -I$(WORK_LIB2)
 	$(LINK) OraDbCppMain.o $(LIBS) -o OraDbCppMain
 
 clean:

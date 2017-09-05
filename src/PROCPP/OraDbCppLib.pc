@@ -1,21 +1,21 @@
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
+#include "General.h"
+#include "Database.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <time.h>
 #include <sys/time.h>
-#include "General.h"
-#include "Database.h"
 #include <sqlca.h>
 #include <oraca.h>
 
 //------------------------------------------------------------------------------
 // Local
 //------------------------------------------------------------------------------
-EXEC ORACLE OPTION(ORACA = YES);			// oraca를 사용하기 위함
-EXEC ORACLE OPTION(RELEASE_CURSOR = YES);	// Control release of cursors from cursor cache
+EXEC ORACLE OPTION(ORACA = YES);	
+EXEC ORACLE OPTION(RELEASE_CURSOR = YES);
 //------------------------------------------------------------------------------
 // DBError
 //------------------------------------------------------------------------------
@@ -47,16 +47,17 @@ int DBaseDisconnect_cpp(void)
 	EXEC SQL COMMIT WORK RELEASE;
 	return ((sqlca.sqlcode < 0) ? 0 : 1);
 }
+
 //------------------------------------------------------------------------------ 
 // DBSelectTest_cpp
 //------------------------------------------------------------------------------ 
-int DBSelectTest_cpp(YGD_DB *pInfo, int maxEntry)
+int DBSelectTest_cpp(DB_YGD *pInfo, int maxEntry)
 {
 	printf("DBSelectTest[0]\n");
 	int count = 0;
 
 	EXEC SQL BEGIN DECLARE SECTION;
-		YGD_DB *ptr = pInfo;
+		DB_YGD *ptr = pInfo;
 	EXEC SQL END DECLARE SECTION;
 
 	EXEC SQL DECLARE csTEST CURSOR FOR
