@@ -63,6 +63,12 @@ typedef struct
 } DB_YGD;
 
 #define YGD_DB_SIZE	sizeof(DB_YGD);
+
+typedef struct 
+{
+	int ISPT_EQUIP_ID;
+	int ISPT_EQUIP_TP;
+}DB_AAA;
 //------------------------------------------------------------------------------
 // DB_EQUIP
 //------------------------------------------------------------------------------

@@ -109,7 +109,7 @@ void ManageThread(void)
 			Map.Client.erase(it++);
 			continue;
 		}
-		printf("ID:%d\n", ptr->ID);
+		//printf("ID:%d\n", ptr->ID);
 		pThread = ptr->Thread;
 		pThread->Manage();		// Manage thread
 		if (pThread != NULL && pThread->IsRunning(&state))

@@ -4,7 +4,7 @@ make clean
 cd /home/ygd/test/work/GD/CLSlib/src/lib
 make clean
 
-cd /home/ygd/test/work/GD/CLSlib/src/PROC
+cd /home/ygd/test/work/GD/CLSlib/src/PROCPP
 make clean
 
 cd /home/ygd/test/work/GD/CLSlib/src/CLSMAIN

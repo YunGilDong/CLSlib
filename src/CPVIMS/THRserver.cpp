@@ -11,7 +11,7 @@ extern SHARED_MEM *ShmPtr;
 extern CLSthreadC ThrServer;
 
 extern void DeleteClient(CLSequip *ptr, int id);
-//extern void *THRclient(void *);
+extern void *THRclient(void *);
 extern void THRsigHandler(int);
 extern bool NeedTerminate(void);
 //------------------------------------------------------------------------------
@@ -22,13 +22,10 @@ void TSVclearEnv(void);
 // Global Variable
 //------------------------------------------------------------------------------
 // Local Variable
+int CallCnt = 1;
 //------------------------------------------------------------------------------
 // CLStcp TcpServer("EQUIPSVTCP","TCP_SERVER_PORT, "")'
 
-void TCLsigHandler(CLSequip *, int)
-{
-
-}
 //------------------------------------------------------------------------------
 // TSVsigHandler
 //------------------------------------------------------------------------------
@@ -50,14 +47,100 @@ void TSVsigHandler(int sig)
 //------------------------------------------------------------------------------
 bool TSVcreateClient(int id)
 {
+	char name[SHORTBUF_LEN];
+	CLSequip *cPtr, *dPtr;
 
+	Log.Write("TSVcreateClient [0]");
+	// 등록된 Equip 인지 확인
+	if ((dPtr = Map.GetDB(id)) == NULL)
+	{
+		Log.Write(1, "Undefined Equip ID access [%s]", id);
+		return (false);
+	}
+	Log.Write("TSVcreateClient [1]");
+	// 존재하는 Client확인
+	sprintf(name, "CL%d", dPtr->ID);
+	if ((cPtr = Map.Get(id)) != NULL)
+	{
+		Log.Write(1, "Client already exist [%s]", name);
+		DeleteClient(cPtr, id);
+	}
+	Log.Write("TSVcreateClient [2]");
+	// Client thread create
+	if ((dPtr->Thread = new CLSthreadC(name, THRclient, dPtr)) == NULL)
+	{
+		Log.Write(1, "Client create fail [%s]", name);
+		delete dPtr->Thread;
+		return (false);
+	}
+	Log.Write("TSVcreateClient [3]");
+	// Thread 관리를 위해 map 생성
+	if (!Map.Add(id, dPtr))
+	{
+		Log.Write(1, "Client add fail [%s]", name);
+		return (false);
+	}
+	Log.Write("TSVcreateClient [4]");
+	// Child thread start
+	Log.Write(1, "New client added [%s]", name);
+	if (!dPtr->Thread->Start())
+	{
+		Log.Write(1, "Client start fail [%s]", name);
+		return (false);
+	}
+	dPtr->Active = true;
+	Log.Write("TSVcreateClient [5]finish");
+	return (true);
 }
 //------------------------------------------------------------------------------
 // TSVmanage
 //------------------------------------------------------------------------------
 bool TSVmanage(void)
 {
+	int id1, id2, id3, id4, id5;
+	id1 = 1000;	id2 = 1001; id3 = 1002; id4 = 1003; id5 = 1234;
 
+	if (CallCnt == 1)
+	{
+		if (TSVcreateClient(id1))
+		{
+			CallCnt++;
+			return (true);
+		}
+	}
+	if (CallCnt == 2)
+	{
+		if (TSVcreateClient(id2))
+		{
+			CallCnt++;
+			return (true);
+		}
+	}
+	if (CallCnt == 3)
+	{
+		if (TSVcreateClient(id3))
+		{
+			CallCnt++;
+			return (true);
+		}
+	}
+	if (CallCnt == 4)
+	{
+		if (TSVcreateClient(id4))
+		{
+			CallCnt++;
+			return (true);
+		}
+	}
+	if (CallCnt == 5)
+	{
+		if (TSVcreateClient(id5))
+		{
+			CallCnt++;
+			return (true);
+		}
+	}
+	return (true);
 }
 //------------------------------------------------------------------------------
 // TSVinitNetwork
@@ -121,11 +204,16 @@ void *THRserver(void *data)
 	bool initOK;
 	initOK = TSVinitEnv();	// 작업 환경 초기화
 
-							// Main loop
+	Log.Write("THRserver log address %d ", Log);
+
+	// Main loop
 	while (initOK && !ThrServer.Terminate && !NeedTerminate())
 	{
-		Log.Debug("THRserver run##"); 
+		//Log.Debug("THRserver run##"); 
 		ThrServer.MarkTime();
+
+		//if (!TSVmanage())
+		//	break;
 
 		ThrServer.UpdateRunInfo();	// 실행 정보 갱신
 		ThrServer.Pause(1000);		// 10 msec

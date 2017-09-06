@@ -5,6 +5,7 @@
 // Include
 //------------------------------------------------------------------------------
 #include "CLSequip.h"
+#include "CLSlog.h"
 //------------------------------------------------------------------------------
 #include <map>
 #include <string>
@@ -30,9 +31,10 @@ typedef MAP_DB::iterator MPDB_IT;
 class CLSmap : public CLSobject
 {
 private:
-	MAP_DB m_dbase;
+	//MAP_DB m_dbase;
 public:
 	MAP_CLIENT Client;
+	MAP_DB m_dbase;
 
 	CLSmap(void);
 	CLSmap(const char *name);
@@ -43,7 +45,7 @@ public:
 	void Erase(int id);
 	CLSequip *Get(int id);
 	CLSequip *Get(pthread_t id);
-	CLSequip *GetDB(int id);
+	CLSequip *GetDB(const int id);
 };
 //------------------------------------------------------------------------------
 #endif // !CLSmapH

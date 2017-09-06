@@ -15,8 +15,13 @@ bool initEnv()
 	}
 	printf("Database connect success\n");
 
-	//YGD_DB info[3];
-	//DBSelectTest_cpp(info, 3);
+	DB_YGD info[3];
+	DBSelectTest_cpp(info, 3);
+
+	for (int idx = 0; idx < 3; idx++)
+	{
+		printf("##[main]%d %s %d %s \n", info[idx].ISPT_EQUIP_ID, info[idx].ISPT_EQUIP_NM, info[idx].ISPT_EQUIP_TP, info[idx].ISPT_OFFICE_ID);
+	}
 	return (true);
 }
 //------------------------------------------------------------------------------

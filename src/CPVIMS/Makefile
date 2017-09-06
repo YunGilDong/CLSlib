@@ -39,7 +39,7 @@ LIBS = -lYgd -lSane -pthread
 #
 # Object files
 #
-OBJS = CPVIMS.o THRserver.o CLSmap.o
+OBJS = CPVIMS.o THRserver.o THRclient.o CLSmap.o
 #OBJS = CLSmap.o
 #
 # Target Process

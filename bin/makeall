@@ -6,7 +6,7 @@ cd /home/ygd/test/work/GD/CLSlib/src/lib
 make clean
 make
 
-cd /home/ygd/test/work/GD/CLSlib/src/PROC
+cd /home/ygd/test/work/GD/CLSlib/src/PROCPP
 make clean
 make
 

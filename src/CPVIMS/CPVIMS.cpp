@@ -114,7 +114,7 @@ void ManageThread(void)
 
 	// Manage server thread
 	ThrServer.Manage();
-/*
+
 	// Manage client thread
 	for (it = Map.Client.begin(); it != Map.Client.end();)
 	{
@@ -135,7 +135,7 @@ void ManageThread(void)
 			Map.Client.erase(it++);
 		}
 	}
-	*/
+	
 }
 //------------------------------------------------------------------------------
 // ManageTest
@@ -222,10 +222,26 @@ void TerminateThread(void)
 bool InitEquip(void)
 {
 	CLSequip *pEquip = ShmPtr->equip;
+	CLSequip *ptr;
+	MPDB_IT it;
 
 	// DB Map
 	for (int idx = 0; idx < ShmSys->Equip; idx++, pEquip++)
+	{
+		Log.Write("init DB %d", idx + 1);
+		Log.Write("init DB %d", pEquip->Mng.id);
 		Map.AddDB(pEquip->Mng.id, pEquip);
+	}
+	int i = 0;
+	for (it = Map.m_dbase.begin(); it != Map.m_dbase.end(); it++)
+	{
+		Log.Write("init get DB %d", i + 1);
+		//if ((ptr = it->second) == NULL)
+		//	continue;
+		ptr = it->second;
+
+		Log.Write("MAP EQUIP ID: %d", ptr->ID);
+	}
 }
 //------------------------------------------------------------------------------
 // InitOption
@@ -317,6 +333,8 @@ int main(int argc, char **argv)
 
 	// 작업 환경 초기화
 	initOK = InitEnv(argc, argv);
+
+	Log.Write("CPVIMS main log address %d ", Log);
 
 	//Main Loop
 	while (initOK && !NeedTerminate())

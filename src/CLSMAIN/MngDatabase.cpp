@@ -65,12 +65,14 @@ bool LoadPrcmthr(void)
 //------------------------------------------------------------------------------
 bool LoadEquip(void)
 {
-	/*
+	
 	DB_EQUIP info[MAX_EQUIP], *pInfo = info;
 	CLSequip *pEquip = ShmPtr->equip;
 	
 	// Get istp equip database
-	ShmSys->Equip = DBGetEquip(info, MAX_EQUIP);
+	ShmSys->Equip = DBGetEquip_cpp(info, MAX_EQUIP);
+
+	Log.Write("Equip cnt:%d", ShmSys->Equip);
 
 	// Initialize ispt equip information
 	Log.Debug(1, "Ispt equip database:");
@@ -82,10 +84,16 @@ bool LoadEquip(void)
 			, pInfo->ISPT_EQUIP_TP, strlen(pInfo->INSTALL_DT), pInfo->INSTALL_DT
 			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID);
 
+		Log.Write(1, "\t[%4d:%5d]  %.*s:%d:%.*s:%d:%.*s"
+			, idx
+			, pInfo->ISPT_EQUIP_ID, strlen(pInfo->ISPT_EQUIP_NM), pInfo->ISPT_EQUIP_NM
+			, pInfo->ISPT_EQUIP_TP, strlen(pInfo->INSTALL_DT), pInfo->INSTALL_DT
+			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID);
+
 		pEquip->Init(pInfo);
 		
 	}
-	*/
+	
 	return (true);
 }
 //------------------------------------------------------------------------------
