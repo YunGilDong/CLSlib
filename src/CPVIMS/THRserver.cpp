@@ -64,6 +64,7 @@ bool TSVcreateClient(int id)
 	{
 		Log.Write(1, "Client already exist [%s]", name);
 		DeleteClient(cPtr, id);
+		return (false);
 	}
 	Log.Write("TSVcreateClient [2]");
 	// Client thread create
@@ -212,8 +213,8 @@ void *THRserver(void *data)
 		//Log.Debug("THRserver run##"); 
 		ThrServer.MarkTime();
 
-		//if (!TSVmanage())
-		//	break;
+		if (!TSVmanage())
+			break;
 
 		ThrServer.UpdateRunInfo();	// 실행 정보 갱신
 		ThrServer.Pause(1000);		// 10 msec

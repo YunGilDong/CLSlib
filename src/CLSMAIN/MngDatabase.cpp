@@ -90,8 +90,7 @@ bool LoadEquip(void)
 			, pInfo->ISPT_EQUIP_TP, strlen(pInfo->INSTALL_DT), pInfo->INSTALL_DT
 			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID);
 
-		pEquip->Init(pInfo);
-		
+		pEquip->Init(pInfo);		
 	}
 	
 	return (true);

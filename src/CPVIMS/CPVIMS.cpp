@@ -44,7 +44,7 @@ void SigHandler(int sig)
 	}
 }
 //------------------------------------------------------------------------------
-// THRsigHandler
+// THRsigHandler (external function)
 //------------------------------------------------------------------------------
 void THRsigHandler(int sig)
 {
@@ -52,13 +52,13 @@ void THRsigHandler(int sig)
 	CLSequip *ptr;
 	
 	Log.Write("Thread id [%d] sig [%d]", id, sig);
-	// Processserver thread signal
+	// Process server thread signal
 	if (id == ThrServer.ID)
 	{
 		TSVsigHandler(sig);
 		return;
 	}
-	// Process Client thread signal
+	// Process client thread signal
 	if ((ptr = Map.Get(id)) != NULL)
 		TCLsigHandler(ptr, sig);
 }

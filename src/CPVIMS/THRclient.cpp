@@ -20,11 +20,11 @@ void TCLsigHandler(CLSequip *ptr, int sig)
 	Log.Write(1, "CL%d Signal %d accepted", ptr->ID, sig);
 	switch (sig)
 	{
-	case SIGUSR1:
-	case SIGSEGV:
+	case SIGUSR1:	// 10
+	case SIGSEGV:	// 11
 		TCLclearEnv(ptr);
 		break;
-	case SIGPIPE:
+	case SIGPIPE:	// 13
 	default:
 		break;
 	}

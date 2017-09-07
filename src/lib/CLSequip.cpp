@@ -63,6 +63,7 @@ void CLSequip::Init(void)
 void CLSequip::Init(DB_EQUIP *pInfo)
 {
 	ID = pInfo->ISPT_EQUIP_ID;
+	Mng.id = pInfo->ISPT_EQUIP_ID;
 	Mng.type = pInfo->ISPT_EQUIP_TP;
 	SetName("EQUIP%d", ID);
 	Socket = -1;
