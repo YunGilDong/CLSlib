@@ -12,6 +12,7 @@
 // Constant
 //------------------------------------------------------------------------------
 #define	VIMS_TCPBUF_LEN		1024
+#define	VIMS_SHORTBUF_LEN	256
 #define VIMS_HEADER_LEN		9
 #define VIMS_TIMEOUT_MAX	3
 #define VIMS_CHECK_INTERVAL	10000	// 10 sec
@@ -58,8 +59,18 @@
 #define VIMS_HL_RST		0x52
 #define VIMS_BS_RST		0x53
 //------------------------------------------------------------------------------
+#define VIMS_ACK		0xA0
+#define VIMS_NACK		0xA1
+//------------------------------------------------------------------------------
 #define VIMS_HEART_REQ	0x70
 #define VIMS_HEART_RES	0x80
+//------------------------------------------------------------------------------
+// OPOCDE Array Index (수신받은 메시지를 송신할때 사용)
+//------------------------------------------------------------------------------
+#define OP_AUTHEN		0
+#define OP_LOGIN		1
+#define OP_LOGOUT		OP_LOGIN+1
+#define MAX_OP			OP_LOGOUT+1
 //------------------------------------------------------------------------------
 // Type definition
 //------------------------------------------------------------------------------
@@ -71,7 +82,7 @@ typedef enum { VIMS_CODE,
 			VIMS_LEN1, VIMS_LEN2, 
 			VIMS_DATA } RX_STATE;
 //------------------------------------------------------------------------------
-// TOM_INFO
+// TOM_INFO (송신 메시지에 대해 수신을 확인할 때)
 //------------------------------------------------------------------------------
 typedef struct
 {
@@ -86,6 +97,21 @@ typedef struct
 } TOM_INFO;
 
 #define TOM_INFO_SIZE		sizeof(TOM_INFO);
+//------------------------------------------------------------------------------
+// TOM_RCV_INFO (수신받은 메시지에 대해 송신을 확인 할 때)
+//------------------------------------------------------------------------------
+typedef struct
+{
+	int sequence;	// 수신 일련번호
+	int length;		// 수신 정보수
+	BYTE code;		// 수신받은 코드
+	BYTE nackCode;	// NACK 코드
+	bool waiting;	// 송신 대기 여부
+	char message[VIMS_TCPBUF_LEN]; // 수신 메시지
+	struct timeval rxTime;	// 수신 시각
+}RCV_TOM_INFO;
+
+#define RCV_TOM_INFO_SIZE	sizeof(RCV_TOM_INFO);
 //------------------------------------------------------------------------------
 // VIMS_TXSTAT
 //------------------------------------------------------------------------------
@@ -124,6 +150,7 @@ private:
 	CLSequip *m_pEquip;
 	RX_STATE m_state;
 	TOM_INFO m_tomInfo;
+	RCV_TOM_INFO m_rTomInfo[MAX_OP];
 	VIMS_TXSTAT m_txStat;
 	struct tm *m_curTod;
 	struct timeval m_statusTimer;
@@ -138,8 +165,24 @@ private:
 	bool ManageTX(void);	
 	void SetRxState(RX_STATE state, int delta = 0);
 	void SetTOMinfo(int length, BYTE code, char *message, int timeout = 300);
+	void SetRcvTOMinfo(int length, BYTE code, char *message);
 
 	void PrcHeartbeat(void);
+	void PrcAuthen(void);
+		
+	bool SendConfig(void);
+	bool SendVerInfo(void);
+	bool SendRcptInfo(void);
+	bool SendVhInfo(void);
+	bool SendSpecInfo(void);
+	bool SendHeartbeat(void);
+	bool SendAck(BYTE code, BYTE nackCode = 0);
+	bool SendNAck(void);
+
+	bool SendMessage(void);
+	bool SendMessage(BYTE code, int length = 0, char *info = NULL);
+
+	
 
 public:
 	CLSvimsIFH(void);

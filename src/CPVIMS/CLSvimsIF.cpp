@@ -184,7 +184,10 @@ void CLSvimsIFH::MsgHandler(void)
 	switch (code)
 	{	
 	case VIMS_AUTHEN:
+	case VIMS_LOGIN:
+	case VIMS_LOGOUT:
 		// ACK or NACK
+		SetRcvTOMinfo(m_length, code, m_message);
 		break;
 	case VIMS_CONFIG_REQ:
 		// VIMS_CONFIG_RES
@@ -232,7 +235,7 @@ bool CLSvimsIFH::ManageTimeout(void)
 		return (true);
 
 	// 대기시간 경과 여부 확인
-	if (!CheckElapsedTime(&ptr->txTime, ptr->timeout))
+	if (!CheckElapsedTime(&ptr->txTime, ptr->timeout))	// 대기시간이 설정한 타임아웃 시간 이내면
 		return (true);
 
 	// Timeout 이상 처리 여부 결정
@@ -307,12 +310,33 @@ void CLSvimsIFH::SetTOMinfo(int length, BYTE code, char *message, int timeout)
 	gettimeofday(&ptr->txTime, NULL);
 	ptr->waiting = true;		// 수신 받을 메세지가 있음.
 }
+void CLSvimsIFH::SetRcvTOMinfo(int length, BYTE code, char *message)
+{
+	RCV_TOM_INFO *ptr;
+
+	switch (code)
+	{
+	case VIMS_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
+		break;
+	case VIMS_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
+		break;
+	case VIMS_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
+		break;
+	}
+
+	ptr->sequence = m_rxSequence;
+	ptr->length = length;
+	memcpy(&ptr->message, message, length);
+	gettimeofday(&ptr->rxTime, NULL);
+	ptr->waiting = true;		// 송신할 메시지가 있음 (ACK or NACK)
+}
 //------------------------------------------------------------------------------
 // Manage
 //------------------------------------------------------------------------------
 bool CLSvimsIFH::Manage(void)
 {
 	time(&m_curClock);		// 현재 시각 갱신
+	m_curTod = localtime(&m_curClock);
 
 							// Manage RX Timeout
 	if (!ManageTimeout())
@@ -339,5 +363,198 @@ bool CLSvimsIFH::Manage(void)
 //------------------------------------------------------------------------------
 void CLSvimsIFH::PrcHeartbeat(void)
 {
+
+}
+//------------------------------------------------------------------------------
+// PrcAuthen
+//------------------------------------------------------------------------------
+void CLSvimsIFH::PrcAuthen(void)
+{
+	//if (AuthenOK())
+	//return (true);
+	//else return (false);
 	
+}
+//------------------------------------------------------------------------------
+// SendConfig
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendConfig(void)
+{
+	char info[VIMS_SHORTBUF_LEN];
+	int idx = 0;
+
+	Log.Write(m_id, 1, "%s Send config info", m_stamp);
+	memset(info, 0, 147);
+	snprintf(info, 16, "127.0.0.1");		idx += 16;
+	SetNumber(info[idx], 5010);			idx += 2;
+	info[idx] = 1;						idx += 1;	// ftp 접속 모드
+	snprintf(&info[idx], 16, "miosftp");	idx += 16;	// ftp id
+	snprintf(&info[idx], 16, "mios4321#"); idx += 16;	// ftp passwd
+	snprintf(&info[idx], 32, "/ISPT_IMG");	idx += 32;
+	snprintf(&info[idx], 32, "/ISPT_PIC");	idx += 32;
+	snprintf(&info[idx], 32, "/ISPT_IMG/SPECIMG");	idx += 32;
+
+	return (SendMessage(VIMS_CONFIG_RES, idx, info));
+}
+//------------------------------------------------------------------------------
+// SendVerInfo
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendVerInfo(void)
+{
+	//1464327460
+	char info[VIMS_SHORTBUF_LEN];
+	int idx = 0;
+
+	Log.Write(m_id, 1, "%s Send Ver info", m_stamp);
+	memset(info, 0, 72);
+	SetNumber(info, 1464327460, 4);				idx += 4;
+	snprintf(&info[idx], "ISPT_CRTR.CSV", 32);	idx += 32;
+	SetNumber(&info[idx], 1464327460, 4);		idx += 4;
+	snprintf(&info[idx], "VH_SPEC.CSV", 32);	idx += 32;
+
+	return (SendMessage(VIMS_VER_RES, idx, info));
+}
+//------------------------------------------------------------------------------
+// SendRcptInfo
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendRcptInfo(void)
+{
+
+}
+//------------------------------------------------------------------------------
+// SendVhInfo
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendVhInfo(void)
+{
+
+}
+//------------------------------------------------------------------------------
+// SendSpecInfo
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendSpecInfo(void)
+{
+
+}
+//------------------------------------------------------------------------------
+// SendHeartbeat
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendHeartbeat(void)
+{
+
+}
+//------------------------------------------------------------------------------
+// SendAck
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendAck(BYTE code, BYTE nackCode)
+{
+	char info[SHORTBUF_LEN];
+	RCV_TOM_INFO *ptr;
+	int idx = 0;
+
+	memset(info, 0, 3);
+
+	switch (code)
+	{
+	case OP_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
+		break;
+	case OP_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
+		break;
+	case OP_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
+		break;
+	}
+		
+	info[idx] = ptr->code;					idx += 1;
+	SetNumber(&info[idx], ptr->sequence);	idx += 2;
+	
+	return (SendMessage(VIMS_ACK, idx, info));
+}
+//------------------------------------------------------------------------------
+// SendNAck
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendNAck(void)
+{
+	char info[SHORTBUF_LEN];
+	RCV_TOM_INFO *ptr;
+	int idx = 0;
+
+	memset(info, 0, 4);
+
+	switch (code)
+	{
+	case OP_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
+		break;
+	case OP_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
+		break;
+	case OP_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
+		break;
+	}
+
+	info[idx] = ptr->code;					idx += 1;
+	SetNumber(&info[idx], ptr->sequence);	idx += 2;
+	info[idx] = 0x01;						idx += 1;
+
+	return (SendMessage(VIMS_NACK, idx, info));
+}
+//------------------------------------------------------------------------------
+// SendMessage
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendMessage(void)
+{
+	/* 미수신 메시지 재전송 */
+	int level;
+	char stamp[SHORTBUF_LEN];
+	TOM_INFO *ptr = &m_tomInfo;
+
+	if (!Write(ptr->message, ptr->length))
+		return (false);
+
+	sprintf(stamp, "%s TX (re)", m_stamp);
+	Log.FLdump(m_id, 1, "stamp, ptr->message, ptr->length, ptr->length");
+	return (true);
+}
+//------------------------------------------------------------------------------
+bool CLSvimsIFH::SendMessage(BYTE code, int length, char *info)
+{
+	int level, txLength = length + VIMS_HEADER_LEN;
+	bool waitResponse = false;
+	char message[VIMS_TCPBUF_LEN], stamp[SHORTBUF_LEN];
+
+	// General message packet
+	memset(message, 0, VIMS_TCPBUF_LEN);
+	message[VIMS_OPCODE] = code;
+	SetNumber(&message[VIMS_DEV_ID], m_id, 4);
+
+	switch (code)
+	{
+	case VIMS_ACK:
+	case VIMS_NACK:
+	case VIMS_CONFIG_RES:
+	case VIMS_VER_RES:
+	case VIMS_RCPT_RES:
+	case VIMS_VH_RES:
+	case VIMS_SPEC_RES:
+		SetNumber(&message[VIMS_SEQ], ++m_txSequence);
+		if (length && info != NULL)
+			memcpy(&message[VIMS_DATA], info, length);
+		break;
+	case VIMS_HEART_REQ:
+		waitResponse = true;
+		SetNumber(&message[VIMS_SEQ], ++m_txSequence);
+		if (length && info != NULL)
+			memcpy(&message[VIMS_DATA], info, length);
+		break;
+	default:
+		Log.Write("m_id", 1, "Undefined TX code[%02x]"code);
+
+	}
+	SetNumber(&message[VIMS_LEN], txLength);
+	if (!Write(message, txLength))
+		return (false);
+	
+	if (waitResponse)
+		SetTOMinfo(txLength, code, message);
+
+	sprintf(stamp, "%s TX", m_stamp);
+	Log.FLdump(m_id, 1, stamp, message, txLength, txLength);
+	return (true);
 }

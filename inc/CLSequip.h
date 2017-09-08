@@ -51,6 +51,10 @@ public:
 	void Delete(void);
 	void Init(void);
 	void Init(DB_EQUIP *pInfo);
+
+	bool EquipAuthen(const int devID);
+	bool EquipLogin(const char *id, const char *pwd);
+	bool EquipLogout(const char *id);
 };
 //------------------------------------------------------------------------------
 #endif // !CLSequipH
