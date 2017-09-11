@@ -78,17 +78,19 @@ bool LoadEquip(void)
 	Log.Debug(1, "Ispt equip database:");
 	for (int idx = 0; idx < ShmSys->Equip; idx++, pEquip++, pInfo++)
 	{
-		Log.Debug(1, "\t[%4d:%5d]  %.*s:%d:%.*s:%d:%.*s"
+		Log.Debug(1, "\t[%4d:%5d]  %.*s:%d:%.*s:%d:%.*s:%.*s"
 			, idx
 			, pInfo->ISPT_EQUIP_ID, strlen(pInfo->ISPT_EQUIP_NM), pInfo->ISPT_EQUIP_NM
 			, pInfo->ISPT_EQUIP_TP, strlen(pInfo->INSTALL_DT), pInfo->INSTALL_DT
-			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID);
+			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID
+			, strlen(pInfo->IP_ADDR), pInfo->IP_ADDR);
 
-		Log.Write(1, "\t[%4d:%5d]  %.*s:%d:%.*s:%d:%.*s"
+		Log.Write(1, "\t[%4d:%5d]  %.*s:%d:%.*s:%d:%.*s:%.*s"
 			, idx
 			, pInfo->ISPT_EQUIP_ID, strlen(pInfo->ISPT_EQUIP_NM), pInfo->ISPT_EQUIP_NM
 			, pInfo->ISPT_EQUIP_TP, strlen(pInfo->INSTALL_DT), pInfo->INSTALL_DT
-			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID);
+			, pInfo->ISPT_LANE, strlen(pInfo->ISPT_OFFICE_ID), pInfo->ISPT_OFFICE_ID
+			, strlen(pInfo->IP_ADDR), pInfo->IP_ADDR);
 
 		pEquip->Init(pInfo);		
 	}

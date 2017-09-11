@@ -18,12 +18,12 @@ using namespace std;
 //------------------------------------------------------------------------------
 // MAP_CLIENT
 //------------------------------------------------------------------------------
-typedef map <int, CLSequip *> MAP_CLIENT;
+typedef map <string, CLSequip *> MAP_CLIENT;
 typedef MAP_CLIENT::iterator MPCL_IT;
 //------------------------------------------------------------------------------
 // MAP_DB
 //------------------------------------------------------------------------------
-typedef map <int, CLSequip *> MAP_DB;
+typedef map <string, CLSequip *> MAP_DB;
 typedef MAP_DB::iterator MPDB_IT;
 //------------------------------------------------------------------------------
 // Class
@@ -40,12 +40,12 @@ public:
 	CLSmap(const char *name);
 	~CLSmap(void);
 
-	bool Add(int id, CLSequip *ptr);
-	bool AddDB(int id, CLSequip *ptr);
-	void Erase(int id);
-	CLSequip *Get(int id);
+	bool Add(char *address, CLSequip *ptr);
+	bool AddDB(char *address, CLSequip *ptr);
+	void Erase(char *address);
+	CLSequip *Get(char * id);
 	CLSequip *Get(pthread_t id);
-	CLSequip *GetDB(const int id);
+	CLSequip *GetDB(char *address);
 };
 //------------------------------------------------------------------------------
 #endif // !CLSmapH

@@ -75,7 +75,7 @@ int DBSelectTest_cpp(DB_YGD *pInfo, int maxEntry)
 		EXEC SQL FETCH csTEST INTO :ptr;
 		if (sqlca.sqlcode == 1403)
 			break;
-		printf("##%d %s %d %s \n",ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID);
+		printf("##%d %s %d %s %s\n",ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID);
 		count++;
 	}
 	EXEC SQL CLOSE csTEST;	
@@ -97,12 +97,13 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
 			char INSTALL_DT[20];	
 			int ISPT_LANE;
 			char ISPT_OFFICE_ID[8];
+			char IP_ADDR[46];
 		} DB_EQUIP_;
 		DB_EQUIP_ *ptr = (DB_EQUIP_*)pInfo;
 	EXEC SQL END DECLARE SECTION;
 	
 	EXEC SQL DECLARE csEQUIP CURSOR FOR
-		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, INSTALL_DT, ISPT_LANE, ISPT_OFFICE_ID
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, INSTALL_DT, ISPT_LANE, ISPT_OFFICE_ID, IP_ADDR
 		FROM ISPT_EQUIP
 		ORDER BY ISPT_EQUIP_ID;
 	
@@ -113,6 +114,8 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
 		if (sqlca.sqlcode == 1403)
 			break;
 
+//		printf("##%d %s %d %s %s %s\n"
+//		,ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID, ptr->IP_ADDR);
 		count++;
 	}
 	EXEC SQL CLOSE csEQUIP;

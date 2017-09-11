@@ -102,16 +102,16 @@ static struct sqlexd {
             int   sqfoff;
    unsigned int   sqcmod;
    unsigned int   sqfmod;
-   unsigned char  *sqhstv[6];
-   unsigned long  sqhstl[6];
-            int   sqhsts[6];
-            short *sqindv[6];
-            int   sqinds[6];
-   unsigned long  sqharm[6];
-   unsigned long  *sqharc[6];
-   unsigned short  sqadto[6];
-   unsigned short  sqtdso[6];
-} sqlstm = {12,6};
+   unsigned char  *sqhstv[7];
+   unsigned long  sqhstl[7];
+            int   sqhsts[7];
+            short *sqindv[7];
+            int   sqinds[7];
+   unsigned long  sqharm[7];
+   unsigned long  *sqharc[7];
+   unsigned short  sqadto[7];
+   unsigned short  sqtdso[7];
+} sqlstm = {12,7};
 
 // Prototypes
 extern "C" {
@@ -136,7 +136,7 @@ PT_EQUIP  order by ISPT_EQUIP_ID            ";
 
  static const char *sq0004 = 
 "select ISPT_EQUIP_ID ,ISPT_EQUIP_NM ,ISPT_EQUIP_TP ,INSTALL_DT ,ISPT_LANE ,\
-ISPT_OFFICE_ID  from ISPT_EQUIP  order by ISPT_EQUIP_ID            ";
+ISPT_OFFICE_ID ,IP_ADDR  from ISPT_EQUIP  order by ISPT_EQUIP_ID            ";
 
 typedef struct { unsigned short len; unsigned char arr[1]; } VARCHAR;
 typedef struct { unsigned short len; unsigned char arr[1]; } varchar;
@@ -149,10 +149,10 @@ static const short sqlcud0[] =
 51,0,0,3,119,0,521,72,0,0,0,0,0,1,0,
 66,0,0,3,0,0,525,75,0,0,4,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,
 97,0,0,3,0,0,527,81,0,0,0,0,0,1,0,
-112,0,0,4,142,0,521,109,0,0,0,0,0,1,0,
-127,0,0,4,0,0,525,112,0,0,6,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,2,3,0,0,2,
-5,0,0,
-166,0,0,4,0,0,527,118,0,0,0,0,0,1,0,
+112,0,0,4,151,0,521,110,0,0,0,0,0,1,0,
+127,0,0,4,0,0,525,113,0,0,7,0,0,1,0,2,3,0,0,2,5,0,0,2,3,0,0,2,5,0,0,2,3,0,0,2,
+5,0,0,2,5,0,0,
+170,0,0,4,0,0,527,121,0,0,0,0,0,1,0,
 };
 
 
@@ -404,7 +404,7 @@ int DBSelectTest_cpp(DB_YGD *pInfo, int maxEntry)
 
 		if (sqlca.sqlcode == 1403)
 			break;
-		printf("##%d %s %d %s \n",ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID);
+		printf("##%d %s %d %s %s\n",ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID);
 		count++;
 	}
 	/* EXEC SQL CLOSE csTEST; */ 
@@ -446,13 +446,14 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
 			char INSTALL_DT[20];	
 			int ISPT_LANE;
 			char ISPT_OFFICE_ID[8];
+			char IP_ADDR[46];
 		} DB_EQUIP_;
 		DB_EQUIP_ *ptr = (DB_EQUIP_*)pInfo;
 	/* EXEC SQL END DECLARE SECTION; */ 
 
 	
 	/* EXEC SQL DECLARE csEQUIP CURSOR FOR
-		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, INSTALL_DT, ISPT_LANE, ISPT_OFFICE_ID
+		SELECT ISPT_EQUIP_ID, ISPT_EQUIP_NM, ISPT_EQUIP_TP, INSTALL_DT, ISPT_LANE, ISPT_OFFICE_ID, IP_ADDR
 		FROM ISPT_EQUIP
 		ORDER BY ISPT_EQUIP_ID; */ 
 
@@ -488,7 +489,7 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
   struct sqlexd sqlstm;
   sqlorat((void **)0, &sqlctx, &oraca);
   sqlstm.sqlvsn = 12;
-  sqlstm.arrsiz = 6;
+  sqlstm.arrsiz = 7;
   sqlstm.sqladtp = &sqladt;
   sqlstm.sqltdsp = &sqltds;
   sqlstm.iters = (unsigned int  )1;
@@ -548,6 +549,14 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
   sqlstm.sqharm[5] = (unsigned long )0;
   sqlstm.sqadto[5] = (unsigned short )0;
   sqlstm.sqtdso[5] = (unsigned short )0;
+  sqlstm.sqhstv[6] = (unsigned char  *)ptr->IP_ADDR;
+  sqlstm.sqhstl[6] = (unsigned long )46;
+  sqlstm.sqhsts[6] = (         int  )0;
+  sqlstm.sqindv[6] = (         short *)0;
+  sqlstm.sqinds[6] = (         int  )0;
+  sqlstm.sqharm[6] = (unsigned long )0;
+  sqlstm.sqadto[6] = (unsigned short )0;
+  sqlstm.sqtdso[6] = (unsigned short )0;
   sqlstm.sqphsv = sqlstm.sqhstv;
   sqlstm.sqphsl = sqlstm.sqhstl;
   sqlstm.sqphss = sqlstm.sqhsts;
@@ -565,6 +574,8 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
 		if (sqlca.sqlcode == 1403)
 			break;
 
+//		printf("##%d %s %d %s %s %s\n"
+//		,ptr->ISPT_EQUIP_ID, ptr->ISPT_EQUIP_NM, ptr->ISPT_EQUIP_TP, ptr->ISPT_OFFICE_ID, ptr->IP_ADDR);
 		count++;
 	}
 	/* EXEC SQL CLOSE csEQUIP; */ 
@@ -573,11 +584,11 @@ int DBGetEquip_cpp(DB_EQUIP *pInfo, int maxEntry)
  struct sqlexd sqlstm;
  sqlorat((void **)0, &sqlctx, &oraca);
  sqlstm.sqlvsn = 12;
- sqlstm.arrsiz = 6;
+ sqlstm.arrsiz = 7;
  sqlstm.sqladtp = &sqladt;
  sqlstm.sqltdsp = &sqltds;
  sqlstm.iters = (unsigned int  )1;
- sqlstm.offset = (unsigned int  )166;
+ sqlstm.offset = (unsigned int  )170;
  sqlstm.cud = sqlcud0;
  sqlstm.sqlest = (unsigned char  *)&sqlca;
  sqlstm.sqlety = (unsigned short)4352;

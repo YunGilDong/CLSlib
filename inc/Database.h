@@ -80,6 +80,7 @@ typedef struct
 	char INSTALL_DT[20];	
 	int ISPT_LANE;
 	char ISPT_OFFICE_ID[8];
+	char IP_ADDR[46];
 } DB_EQUIP;
 
 #define DB_EQUIP_SIZE	sizeof(DB_EQUIP);

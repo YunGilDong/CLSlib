@@ -10,7 +10,7 @@ extern CLSmap Map;
 extern SHARED_MEM *ShmPtr;
 extern CLSthreadC ThrServer;
 
-extern void DeleteClient(CLSequip *ptr, int id);
+extern void DeleteClient(CLSequip *ptr, char *address);
 extern void *THRclient(void *);
 extern void THRsigHandler(int);
 extern bool NeedTerminate(void);
@@ -45,28 +45,25 @@ void TSVsigHandler(int sig)
 //------------------------------------------------------------------------------
 // TSVcreateClient
 //------------------------------------------------------------------------------
-bool TSVcreateClient(int id)
+bool TSVcreateClient(char *remoteIP)
 {
 	char name[SHORTBUF_LEN];
 	CLSequip *cPtr, *dPtr;
 
-	Log.Write("TSVcreateClient [0]");
 	// 등록된 Equip 인지 확인
-	if ((dPtr = Map.GetDB(id)) == NULL)
+	if ((dPtr = Map.GetDB(remoteIP)) == NULL)
 	{
-		Log.Write(1, "Undefined Equip ID access [%s]", id);
+		Log.Write(1, "Undefined Equip ID access [%s]", remoteIP);
 		return (false);
 	}
-	Log.Write("TSVcreateClient [1]");
 	// 존재하는 Client확인
 	sprintf(name, "CL%d", dPtr->ID);
-	if ((cPtr = Map.Get(id)) != NULL)
+	if ((cPtr = Map.Get(remoteIP)) != NULL)
 	{
 		Log.Write(1, "Client already exist [%s]", name);
-		DeleteClient(cPtr, id);
+		DeleteClient(cPtr, remoteIP);
 		return (false);
 	}
-	Log.Write("TSVcreateClient [2]");
 	// Client thread create
 	if ((dPtr->Thread = new CLSthreadC(name, THRclient, dPtr)) == NULL)
 	{
@@ -74,14 +71,12 @@ bool TSVcreateClient(int id)
 		delete dPtr->Thread;
 		return (false);
 	}
-	Log.Write("TSVcreateClient [3]");
 	// Thread 관리를 위해 map 생성
-	if (!Map.Add(id, dPtr))
+	if (!Map.Add(remoteIP, dPtr))
 	{
 		Log.Write(1, "Client add fail [%s]", name);
 		return (false);
 	}
-	Log.Write("TSVcreateClient [4]");
 	// Child thread start
 	Log.Write(1, "New client added [%s]", name);
 	if (!dPtr->Thread->Start())
@@ -90,7 +85,6 @@ bool TSVcreateClient(int id)
 		return (false);
 	}
 	dPtr->Active = true;
-	Log.Write("TSVcreateClient [5]finish");
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -98,8 +92,9 @@ bool TSVcreateClient(int id)
 //------------------------------------------------------------------------------
 bool TSVmanage(void)
 {
-	int id1, id2, id3, id4, id5;
-	id1 = 1000;	id2 = 1001; id3 = 1002; id4 = 1003; id5 = 1234;
+	char * id1 = "192.168.10.202", *id2 = "192.168.10.200", *id3 = "192.168.10.204";
+	char * id4 = "192.168.10.205", *id5 = "192.168.10.201";
+	//id1 = 1000;	id2 = 1001; id3 = 1002; id4 = 1003; id5 = 1234;
 
 	if (CallCnt == 1)
 	{

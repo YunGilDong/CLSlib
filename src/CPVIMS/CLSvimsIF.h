@@ -8,6 +8,7 @@
 #include "General.h"
 #include "CLStcp.h"
 #include "CLSequip.h"
+
 //------------------------------------------------------------------------------
 // Constant
 //------------------------------------------------------------------------------
@@ -23,7 +24,7 @@
 //------------------------------------------------------------------------------
 #define VIMS_OPCODE		0
 #define VIMS_SEQ		VIMS_OPCODE+1
-#define VIMS_SEQ1		VIMS_SEQ
+#define VIMS_SEQ1		VIMS_SEQ+1
 #define VIMS_SEQ2		VIMS_SEQ1+1
 #define VIMS_DEV_ID		VIMS_SEQ2+1
 #define VIMS_DEV_ID1	VIMS_DEV_ID
@@ -76,11 +77,7 @@
 //------------------------------------------------------------------------------
 // RX_STATE
 //------------------------------------------------------------------------------
-typedef enum { VIMS_CODE, 
-			VIMS_SEQ1, VIMS_SEQ2, 
-			VIMS_DEVID1, VIMS_DEVID2, VIMS_DEVID3, VIMS_DEVID4, 
-			VIMS_LEN1, VIMS_LEN2, 
-			VIMS_DATA } RX_STATE;
+typedef enum { CODE, SEQ1, SEQ2, DEVID1, DEVID2, DEVID3, DEVID4, LEN1, LEN2, DATA } RX_STATE;
 //------------------------------------------------------------------------------
 // TOM_INFO (송신 메시지에 대해 수신을 확인할 때)
 //------------------------------------------------------------------------------
@@ -96,7 +93,7 @@ typedef struct
 	struct timeval txTime;	// 송신 시각
 } TOM_INFO;
 
-#define TOM_INFO_SIZE		sizeof(TOM_INFO);
+#define TOM_INFO_SIZE		sizeof(TOM_INFO)
 //------------------------------------------------------------------------------
 // TOM_RCV_INFO (수신받은 메시지에 대해 송신을 확인 할 때)
 //------------------------------------------------------------------------------
@@ -111,7 +108,7 @@ typedef struct
 	struct timeval rxTime;	// 수신 시각
 }RCV_TOM_INFO;
 
-#define RCV_TOM_INFO_SIZE	sizeof(RCV_TOM_INFO);
+#define RCV_TOM_INFO_SIZE	sizeof(RCV_TOM_INFO)
 //------------------------------------------------------------------------------
 // VIMS_TXSTAT
 //------------------------------------------------------------------------------
@@ -130,7 +127,7 @@ typedef struct
 //------------------------------------------------------------------------------
 // Class
 //------------------------------------------------------------------------------
-CLSvimsIF : public CLStcp
+class CLSvimsIF : public CLStcp
 {
 private:
 	int m_id;	// 장치 ID
@@ -177,7 +174,7 @@ private:
 	bool SendSpecInfo(void);
 	bool SendHeartbeat(void);
 	bool SendAck(BYTE code, BYTE nackCode = 0);
-	bool SendNAck(void);
+	bool SendNAck(BYTE code);
 
 	bool SendMessage(void);
 	bool SendMessage(BYTE code, int length = 0, char *info = NULL);
@@ -185,13 +182,13 @@ private:
 	
 
 public:
-	CLSvimsIFH(void);
-	CLSvimsIFH(const char *name, int port, const char *ipAddr, TCP_MODE mode= TCP_SERVER);
-	CLSvimsIFH(const char *name, int port, int id, TCP_MODE mode = TCP_SERVER);
-	~CLSvimsIFH(void);
+	CLSvimsIF(void);
+	CLSvimsIF(const char *name, int port, const char *ipAddr, TCP_MODE mode= TCP_SERVER);
+	CLSvimsIF(const char *name, int port, int id, TCP_MODE mode = TCP_SERVER);
+	~CLSvimsIF(void);
 
 	bool Manage(void);
-}
+};
 //------------------------------------------------------------------------------
 #endif // !CLSvimsIFH
 //------------------------------------------------------------------------------

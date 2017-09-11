@@ -65,6 +65,7 @@ void CLSequip::Init(DB_EQUIP *pInfo)
 	ID = pInfo->ISPT_EQUIP_ID;
 	Mng.id = pInfo->ISPT_EQUIP_ID;
 	Mng.type = pInfo->ISPT_EQUIP_TP;
+	sprintf(Mng.address, "%s", pInfo->IP_ADDR);
 	SetName("EQUIP%d", ID);
 	Socket = -1;
 	TcpIF = NULL;

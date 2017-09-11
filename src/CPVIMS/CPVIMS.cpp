@@ -77,7 +77,7 @@ bool NeedTerminate(void)
 //------------------------------------------------------------------------------
 // DeleteClient
 //------------------------------------------------------------------------------
-void DeleteClient(CLSequip *pEquip, int id)
+void DeleteClient(CLSequip *pEquip, char *address)
 {
 	// Client 종료 요구
 	if (pEquip->Thread != NULL)
@@ -86,7 +86,7 @@ void DeleteClient(CLSequip *pEquip, int id)
 	for (int idx = 0; idx < 5 && pEquip->Thread->Active; idx++)
 		usleep(5000);	// 5ms
 	pEquip->Delete();
-	Map.Erase(id);
+	Map.Erase(address);
 } 
 //------------------------------------------------------------------------------
 // DeleteClientX
@@ -230,7 +230,7 @@ bool InitEquip(void)
 	{
 		Log.Write("init DB %d", idx + 1);
 		Log.Write("init DB %d", pEquip->Mng.id);
-		Map.AddDB(pEquip->Mng.id, pEquip);
+		Map.AddDB(pEquip->Mng.address, pEquip);
 	}
 	int i = 0;
 	for (it = Map.m_dbase.begin(); it != Map.m_dbase.end(); it++)

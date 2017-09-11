@@ -25,9 +25,9 @@ CLSmap::~CLSmap(void)
 //------------------------------------------------------------------------------
 // Add
 //------------------------------------------------------------------------------
-bool CLSmap::Add(int id, CLSequip *ptr)
+bool CLSmap::Add(char *address, CLSequip *ptr)
 {
-	if (Client.insert(pair<int, CLSequip *>(id, ptr)).second == false)
+	if (Client.insert(pair<string, CLSequip *>(address, ptr)).second == false)
 		return (false);
 
 	return (true);
@@ -35,9 +35,9 @@ bool CLSmap::Add(int id, CLSequip *ptr)
 //------------------------------------------------------------------------------
 // AddDB
 //------------------------------------------------------------------------------
-bool CLSmap::AddDB(int id, CLSequip *ptr)
+bool CLSmap::AddDB(char *address, CLSequip *ptr)
 {
-	if (m_dbase.insert(pair<int, CLSequip *>(id, ptr)).second == false)
+	if (m_dbase.insert(pair<string, CLSequip *>(address, ptr)).second == false)
 		return (false);
 
 	return (true);
@@ -45,11 +45,11 @@ bool CLSmap::AddDB(int id, CLSequip *ptr)
 //------------------------------------------------------------------------------
 // Erase
 //------------------------------------------------------------------------------
-void CLSmap::Erase(int id)
+void CLSmap::Erase(char *address)
 {
 	MPCL_IT it;
 
-	if ((it = Client.find(id)) == Client.end())
+	if ((it = Client.find(address)) == Client.end())
 		return;
 
 	Client.erase(it);
@@ -57,7 +57,7 @@ void CLSmap::Erase(int id)
 //------------------------------------------------------------------------------
 // Get
 //------------------------------------------------------------------------------
-CLSequip *CLSmap::Get(int id)
+CLSequip *CLSmap::Get(char *id)
 {
 	MPCL_IT it;
 
@@ -87,11 +87,11 @@ CLSequip *CLSmap::Get(pthread_t id)
 //------------------------------------------------------------------------------
 // GetDB
 //------------------------------------------------------------------------------
-CLSequip *CLSmap::GetDB(const int id)
+CLSequip *CLSmap::GetDB(char *address)
 {
 	Log.Write("GetDB 0");
 	MPDB_IT it;
-	if ((it = m_dbase.find(id)) == m_dbase.end())	
+	if ((it = m_dbase.find(address)) == m_dbase.end())
 	{
 		Log.Write("GetDB 000");
 		return (NULL);

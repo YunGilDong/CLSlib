@@ -1,7 +1,11 @@
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
+#pragma hdrstop
 #include "CLSvimsIF.h"
+#include "CLSprocess.h"
+#include "CLSlog.h"
+#include "CLSmap.h"
 //------------------------------------------------------------------------------
 // Extern
 //------------------------------------------------------------------------------
@@ -11,38 +15,39 @@ extern CLSprocess *ShmPrc;
 extern CLSsystem *ShmSys;
 extern SHARED_MEM *ShmPtr;
 //------------------------------------------------------------------------------
-// CLSvimsIFH
+// CLSvimsIF
 //------------------------------------------------------------------------------
-CLSvimsIFH::CLSvimsIFH(void)
+CLSvimsIF::CLSvimsIF(void)
 {
 
 }
 //------------------------------------------------------------------------------
-CLSvimsIFH::CLSvimsIFH(const char *name, int port, const char *ipAddr, TCP_MODE mode)
+CLSvimsIF::CLSvimsIF(const char *name, int port, const char *ipAddr, TCP_MODE mode)
 	: CLStcp(name, port, ipAddr, mode)
 {
 
 }
 //------------------------------------------------------------------------------
-CLSvimsIFH::CLSvimsIFH(const char *name, int port, int id, TCP_MODE mode)
+CLSvimsIF::CLSvimsIF(const char *name, int port, int id, TCP_MODE mode)
 	: CLStcp(name, port, id, mode)
 {
 
 }
 //------------------------------------------------------------------------------
-// ~CLSvimsIFH
+// ~CLSvimsIF
 //------------------------------------------------------------------------------
-CLSvimsIFH::~CLSvimsIFH(void)
+CLSvimsIF::~CLSvimsIF(void)
 {
 
 }
 //------------------------------------------------------------------------------
 // CheckTOMinfo
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::CheckTOMinfo(void)
+bool CLSvimsIF::CheckTOMinfo(void)
 {
 	BYTE code = m_message[VIMS_OPCODE];
-	int sequence = GetNumber(m_message[VIMS_SEQ]);
+	TOM_INFO *ptr = &m_tomInfo;
+	int sequence = GetNumber(&m_message[VIMS_SEQ]);
 
 	// 수신대기 상태확인
 	if (!ptr->waiting)
@@ -66,20 +71,20 @@ bool CLSvimsIFH::CheckTOMinfo(void)
 //------------------------------------------------------------------------------
 // InitComState
 //------------------------------------------------------------------------------
-void CLSvimsIFH::InitComState(bool connected)
+void CLSvimsIF::InitComState(bool connected)
 {
 	m_lastClockSend = -1;
 	m_txSequence = -1;
 	m_accepted = false;
 	memset(&m_tomInfo, 0, TOM_INFO_SIZE);
 	memset(&m_txStat, 0, VIMS_TXSTAT_SIZE);
-	SetRxState(VIMS_OPCODE);
+	SetRxState(CODE);
 	SetDebug(ShmPrc->ReqLevel, ShmPrc->ReqTarget);
 }
 //------------------------------------------------------------------------------
 // ManageConnection
 //------------------------------------------------------------------------------
-CON_RESULT CLSvimsIFH::ManageConnection(void)
+CON_RESULT CLSvimsIF::ManageConnection(void)
 {
 	bool tryConnect = false;
 	CON_RESULT status;
@@ -100,7 +105,7 @@ CON_RESULT CLSvimsIFH::ManageConnection(void)
 //------------------------------------------------------------------------------
 // ManageRX
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::ManageRX(void)
+bool CLSvimsIF::ManageRX(void)
 {
 	int count;
 	char buffer[VIMS_TCPBUF_LEN];
@@ -116,7 +121,7 @@ bool CLSvimsIFH::ManageRX(void)
 	RxHandler(buffer, count);
 	return (true);
 }
-void CLSvimsIFH::RxHandler(char *buffer, int count)
+void CLSvimsIF::RxHandler(char *buffer, int length)
 {
 	int remain, request;
 	char *dPtr, *sPtr;	// srcPtr, destPtr;
@@ -129,29 +134,29 @@ void CLSvimsIFH::RxHandler(char *buffer, int count)
 		sPtr = buffer + m_index;
 		switch (m_state)
 		{
-		case VIMS_CODE:
-		case VIMS_SEQ1:
-		case VIMS_SEQ2:
-		case VIMS_DEVID1:
-		case VIMS_DEVID2:
-		case VIMS_DEVID3:
-		case VIMS_DEVID4:
-		case VIMS_LEN1:
+		case CODE:
+		case SEQ1:
+		case SEQ2:
+		case DEVID1:
+		case DEVID2:
+		case DEVID3:
+		case DEVID4:
+		case LEN1:
 			*dPtr = *sPtr;
 			SetRxState((RX_STATE)(m_state + 1), 1);
 			break;
-		case VIMS_LEN2:
+		case LEN2:
 			*dPtr = *sPtr;
 			m_length = GetNumber(&m_message[VIMS_LEN]);
-			SetRxState(VIMS_DATA, 1);
-		case VIMS_DATA:
+			SetRxState(DATA, 1);
+		case DATA:
 			remain = length - m_index;
 			request = m_length - m_tally;
 			if (remain > 0 && request > 0)
 			{
 				request = min(remain, request);
 				memcpy(dPtr, sPtr, request);
-				SetRxState(VIMS_DATA, request);
+				SetRxState(DATA, request);
 			}
 			// Um.. why?
 			if (m_tally < m_length)
@@ -159,22 +164,22 @@ void CLSvimsIFH::RxHandler(char *buffer, int count)
 			
 			MsgHandler();
 		default:
-			SetRxState(VIMS_CODE);	break;
+			SetRxState(CODE);	break;
 		}
 	}
 }
 //------------------------------------------------------------------------------
 // MsgHandler
 //------------------------------------------------------------------------------
-void CLSvimsIFH::MsgHandler(void)
+void CLSvimsIF::MsgHandler(void)
 {
 	int level; 
 	bool waitChecked;
-	BYTE code = m_message[VIMS_CODE];
+	BYTE code = m_message[VIMS_OPCODE];
 	char stamp[SHORTBUF_LEN];
 
 	// 수신메시지 확인
-	m_rxSequence = GetNumber(m_message[VIMS_SEQ1]);
+	m_rxSequence = GetNumber(&m_message[VIMS_SEQ1]);
 	sprintf(stamp, "%s RX", m_stamp);
 	Log.FLdump(m_id, 1, stamp, m_message, m_tally, m_tally);
 
@@ -226,7 +231,7 @@ void CLSvimsIFH::MsgHandler(void)
 //------------------------------------------------------------------------------
 // ManageTimeout
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::ManageTimeout(void)
+bool CLSvimsIF::ManageTimeout(void)
 {
 	TOM_INFO *ptr = &m_tomInfo;
 
@@ -239,7 +244,7 @@ bool CLSvimsIFH::ManageTimeout(void)
 		return (true);
 
 	// Timeout 이상 처리 여부 결정
-	Log.Write((m_id, 2, "%s Timeout %d/%d [%02x]", m_stamp, ptr->count, VIMS_TIMEOUT_MAX, ptr->code);
+	Log.Write(m_id, 2, "%s Timeout %d/%d [%02x]", m_stamp, ptr->count, VIMS_TIMEOUT_MAX, ptr->code);
 	if (++ptr->count >= VIMS_TIMEOUT_MAX)
 	{
 		ptr->waiting = false;
@@ -255,7 +260,7 @@ bool CLSvimsIFH::ManageTimeout(void)
 //------------------------------------------------------------------------------
 // ManageTX
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::ManageTX(void)
+bool CLSvimsIF::ManageTX(void)
 {
 	TOM_INFO *ptr = &m_tomInfo;
 
@@ -278,12 +283,12 @@ bool CLSvimsIFH::ManageTX(void)
 //------------------------------------------------------------------------------
 // SetRxState
 //------------------------------------------------------------------------------
-void CLSvimsIFH::SetRxState(RX_STATE state, int delta)
+void CLSvimsIF::SetRxState(RX_STATE state, int delta)
 {
 	m_state = state;
 	switch (state)
 	{
-	case VIMS_CODE:
+	case CODE:
 		m_tally = 0;
 		if (delta)
 			m_index += delta;
@@ -297,7 +302,7 @@ void CLSvimsIFH::SetRxState(RX_STATE state, int delta)
 //------------------------------------------------------------------------------
 // SetTOMinfo
 //------------------------------------------------------------------------------
-void CLSvimsIFH::SetTOMinfo(int length, BYTE code, char *message, int timeout)
+void CLSvimsIF::SetTOMinfo(int length, BYTE code, char *message, int timeout)
 {
 	TOM_INFO *ptr = &m_tomInfo;
 
@@ -310,7 +315,7 @@ void CLSvimsIFH::SetTOMinfo(int length, BYTE code, char *message, int timeout)
 	gettimeofday(&ptr->txTime, NULL);
 	ptr->waiting = true;		// 수신 받을 메세지가 있음.
 }
-void CLSvimsIFH::SetRcvTOMinfo(int length, BYTE code, char *message)
+void CLSvimsIF::SetRcvTOMinfo(int length, BYTE code, char *message)
 {
 	RCV_TOM_INFO *ptr;
 
@@ -333,7 +338,7 @@ void CLSvimsIFH::SetRcvTOMinfo(int length, BYTE code, char *message)
 //------------------------------------------------------------------------------
 // Manage
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::Manage(void)
+bool CLSvimsIF::Manage(void)
 {
 	time(&m_curClock);		// 현재 시각 갱신
 	m_curTod = localtime(&m_curClock);
@@ -361,14 +366,14 @@ bool CLSvimsIFH::Manage(void)
 //------------------------------------------------------------------------------
 // PrcHeartbeat
 //------------------------------------------------------------------------------
-void CLSvimsIFH::PrcHeartbeat(void)
+void CLSvimsIF::PrcHeartbeat(void)
 {
 
 }
 //------------------------------------------------------------------------------
 // PrcAuthen
 //------------------------------------------------------------------------------
-void CLSvimsIFH::PrcAuthen(void)
+void CLSvimsIF::PrcAuthen(void)
 {
 	//if (AuthenOK())
 	//return (true);
@@ -378,7 +383,7 @@ void CLSvimsIFH::PrcAuthen(void)
 //------------------------------------------------------------------------------
 // SendConfig
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendConfig(void)
+bool CLSvimsIF::SendConfig(void)
 {
 	char info[VIMS_SHORTBUF_LEN];
 	int idx = 0;
@@ -386,7 +391,7 @@ bool CLSvimsIFH::SendConfig(void)
 	Log.Write(m_id, 1, "%s Send config info", m_stamp);
 	memset(info, 0, 147);
 	snprintf(info, 16, "127.0.0.1");		idx += 16;
-	SetNumber(info[idx], 5010);			idx += 2;
+	SetNumber(&info[idx], 5010);			idx += 2;
 	info[idx] = 1;						idx += 1;	// ftp 접속 모드
 	snprintf(&info[idx], 16, "miosftp");	idx += 16;	// ftp id
 	snprintf(&info[idx], 16, "mios4321#"); idx += 16;	// ftp passwd
@@ -399,7 +404,7 @@ bool CLSvimsIFH::SendConfig(void)
 //------------------------------------------------------------------------------
 // SendVerInfo
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendVerInfo(void)
+bool CLSvimsIF::SendVerInfo(void)
 {
 	//1464327460
 	char info[VIMS_SHORTBUF_LEN];
@@ -408,44 +413,44 @@ bool CLSvimsIFH::SendVerInfo(void)
 	Log.Write(m_id, 1, "%s Send Ver info", m_stamp);
 	memset(info, 0, 72);
 	SetNumber(info, 1464327460, 4);				idx += 4;
-	snprintf(&info[idx], "ISPT_CRTR.CSV", 32);	idx += 32;
+	snprintf(&info[idx], 32, "ISPT_CRTR.CSV");	idx += 32;
 	SetNumber(&info[idx], 1464327460, 4);		idx += 4;
-	snprintf(&info[idx], "VH_SPEC.CSV", 32);	idx += 32;
+	snprintf(&info[idx], 32, "VH_SPEC.CSV");	idx += 32;
 
 	return (SendMessage(VIMS_VER_RES, idx, info));
 }
 //------------------------------------------------------------------------------
 // SendRcptInfo
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendRcptInfo(void)
+bool CLSvimsIF::SendRcptInfo(void)
 {
 
 }
 //------------------------------------------------------------------------------
 // SendVhInfo
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendVhInfo(void)
+bool CLSvimsIF::SendVhInfo(void)
 {
 
 }
 //------------------------------------------------------------------------------
 // SendSpecInfo
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendSpecInfo(void)
+bool CLSvimsIF::SendSpecInfo(void)
 {
 
 }
 //------------------------------------------------------------------------------
 // SendHeartbeat
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendHeartbeat(void)
+bool CLSvimsIF::SendHeartbeat(void)
 {
 
 }
 //------------------------------------------------------------------------------
 // SendAck
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendAck(BYTE code, BYTE nackCode)
+bool CLSvimsIF::SendAck(BYTE code, BYTE nackCode)
 {
 	char info[SHORTBUF_LEN];
 	RCV_TOM_INFO *ptr;
@@ -471,12 +476,11 @@ bool CLSvimsIFH::SendAck(BYTE code, BYTE nackCode)
 //------------------------------------------------------------------------------
 // SendNAck
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendNAck(void)
+bool CLSvimsIF::SendNAck(BYTE code)
 {
 	char info[SHORTBUF_LEN];
 	RCV_TOM_INFO *ptr;
 	int idx = 0;
-
 	memset(info, 0, 4);
 
 	switch (code)
@@ -498,7 +502,7 @@ bool CLSvimsIFH::SendNAck(void)
 //------------------------------------------------------------------------------
 // SendMessage
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendMessage(void)
+bool CLSvimsIF::SendMessage(void)
 {
 	/* 미수신 메시지 재전송 */
 	int level;
@@ -509,11 +513,11 @@ bool CLSvimsIFH::SendMessage(void)
 		return (false);
 
 	sprintf(stamp, "%s TX (re)", m_stamp);
-	Log.FLdump(m_id, 1, "stamp, ptr->message, ptr->length, ptr->length");
+	Log.FLdump(m_id, 1, stamp, ptr->message, ptr->length, ptr->length);
 	return (true);
 }
 //------------------------------------------------------------------------------
-bool CLSvimsIFH::SendMessage(BYTE code, int length, char *info)
+bool CLSvimsIF::SendMessage(BYTE code, int length, char *info)
 {
 	int level, txLength = length + VIMS_HEADER_LEN;
 	bool waitResponse = false;
@@ -544,7 +548,7 @@ bool CLSvimsIFH::SendMessage(BYTE code, int length, char *info)
 			memcpy(&message[VIMS_DATA], info, length);
 		break;
 	default:
-		Log.Write("m_id", 1, "Undefined TX code[%02x]"code);
+		Log.Write("m_id", 1, "Undefined TX code[%02x]",code);
 
 	}
 	SetNumber(&message[VIMS_LEN], txLength);
