@@ -88,13 +88,19 @@ CON_RESULT CLSvimsIF::ManageConnection(void)
 {
 	bool tryConnect = false;
 	CON_RESULT status;
-
+	Log.Write("Manage CON");
 	// 연결 상태 확인
 	if (Connected)
+	{
+		Log.Write("TCP CON");
 		return (CON_OK);
+	}
 	// 초기화 상태 확인
 	if (!Initialized && !Open())
+	{
+		Log.Write("TCP CON ERR");
 		return (CON_ERROR);
+	}
 	/*
 	// 연결 요구
 	if ((status = Connect()) == CON_OK)
@@ -343,6 +349,8 @@ bool CLSvimsIF::Manage(void)
 	time(&m_curClock);		// 현재 시각 갱신
 	m_curTod = localtime(&m_curClock);
 
+	Log.Write("Client tcp manage");
+	Log.Debug("Client tcp manage");
 							// Manage RX Timeout
 	if (!ManageTimeout())
 		return (true);
@@ -362,6 +370,12 @@ bool CLSvimsIF::Manage(void)
 		return (false);
 	}
 	return (true);
+}
+void CLSvimsIF::SetID(int id, CLSequip *pEquip)
+{
+	m_id = id;
+	m_pEquip = pEquip;
+	sprintf(m_stamp, "CLTCP%04d", m_id);
 }
 //------------------------------------------------------------------------------
 // PrcHeartbeat
@@ -460,11 +474,11 @@ bool CLSvimsIF::SendAck(BYTE code, BYTE nackCode)
 
 	switch (code)
 	{
-	case OP_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
+	case VIMS_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
 		break;
-	case OP_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
+	case VIMS_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
 		break;
-	case OP_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
+	case VIMS_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
 		break;
 	}
 		
@@ -485,11 +499,11 @@ bool CLSvimsIF::SendNAck(BYTE code)
 
 	switch (code)
 	{
-	case OP_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
+	case VIMS_AUTHEN:	ptr = &m_rTomInfo[OP_AUTHEN];
 		break;
-	case OP_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
+	case VIMS_LOGIN:	ptr = &m_rTomInfo[OP_LOGIN];
 		break;
-	case OP_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
+	case VIMS_LOGOUT:	ptr = &m_rTomInfo[OP_LOGOUT];
 		break;
 	}
 

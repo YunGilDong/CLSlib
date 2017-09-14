@@ -42,12 +42,17 @@ bool CLSrunObject::CheckRunInfo(RUN_STATE *state)
 	// 수행 기록 정리
 	rPtr->prevWdc = rPtr->wdc;
 	rPtr->wdc = 0;
+	
+	//Debug("CheckRunInfo prevWdc:[%d], wdc:[%d]", rPtr->prevWdc, rPtr->wdc);
 	// 정상 동작 여부 확인
 	if (rPtr->prevWdc)
 	{
+		
+		//Debug("CheckRunInfo Success");
 		rPtr->wtc = 0;	//wait counter
 		return (true);
-	}
+	}	
+	//Debug("CheckRunInfo wtc:[%d], wtcMax:[%d]", rPtr->wtc, wPtr->wtcMax);
 	// 비정상 동작 시 대기 시간 확인
 	if (++rPtr->wtc < wPtr->wtcMax)
 		return (true);

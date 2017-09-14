@@ -53,7 +53,7 @@ bool TSVcreateClient(char *remoteIP)
 		return (false);
 	}
 	// 존재하는 Client 확인
-	sprintf(name, "CL%4d", dPtr->ID);
+	sprintf(name, "MTHR%4d", dPtr->ID);
 	if ((cPtr = Map.Get(remoteIP)) != NULL)
 	{
 		Log.Write("Client already exist [%s]", name);
@@ -206,7 +206,7 @@ void *THRserver(void *data)
 		if (!TSVmanage())
 			break;
 		//printf("##[MTHR]THRserver run##\n");
-		Log.Debug("THRserver run");
+		//Log.Debug("THRserver run");
 		ThrServer.UpdateRunInfo();		// 실행 정보 갱신
 		ThrServer.Pause(500);			// 5 msec
 	}

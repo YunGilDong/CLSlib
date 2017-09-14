@@ -90,20 +90,20 @@ void TCLclearEnv(void)
 void *THRclient(void *data)
 {
 	bool initOK;
-
+	int cycle = 0;
 	initOK = TCLinitEnv();	// 작업 환경 초기화
 
 	// Main loop
 	while (initOK && !ThrClient.Terminate && !NeedTerminate())
 	{
 		ThrClient.MarkTime();
-
+		//Log.Debug("THRC client [%d]", cycle++);
 		// 접속 관리
 		if (!TCLmanage())
 			break;
 		//Log.Debug("THRclient run");
 		ThrClient.UpdateRunInfo();	// 실행 정보 갱신
-		ThrClient.Pause(1000);		// 10 msec
+		ThrClient.Pause(500);		// 10 msec
 	}
 	TCLclearEnv();		// 작업 환경 정리
 }

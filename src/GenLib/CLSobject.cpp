@@ -7,12 +7,20 @@
 // Author: YGD
 // Filename : CLSobject.cpp
 // Content: ObjectClass
-//
+// History:		Date		By		Content
+//				----------	------	--------------------------------------------
+//				2017.04.11	YGD		First edition
+//				2017.09.14	YGD		Add printf thread safe
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
 #pragma	hdrstop
 #include "CLSobject.h"
+#include <pthread.h>
+//------------------------------------------------------------------------------
+// Static
+//------------------------------------------------------------------------------
+static pthread_mutex_t printf_mutex;
 //------------------------------------------------------------------------------
 // CLSobject
 //------------------------------------------------------------------------------
@@ -21,6 +29,7 @@ CLSobject::CLSobject(void)
 	Level = 1;
 	Target = 0;
 	memset(Name, 0, OBJNAME_LEN);
+	pthread_mutex_init(&printf_mutex, NULL);
 }
 //------------------------------------------------------------------------------
 CLSobject::CLSobject(const char *name)
@@ -28,7 +37,7 @@ CLSobject::CLSobject(const char *name)
 	Level = 1;
 	Target = 0;
 	SetName(name);
-
+	pthread_mutex_init(&printf_mutex, NULL);
 }
 //------------------------------------------------------------------------------
 // ~CLSobject
@@ -47,7 +56,12 @@ bool CLSobject::CheckDebug(int level, int target)
 		return (false);
 
 	// Check target
-	//
+	if (!Target || !target)		// 설정된 target이 없으면
+		return (true);
+	if (Target != target)
+		return (false);
+
+	return (true);
 }
 //------------------------------------------------------------------------------
 // Debug
@@ -57,8 +71,10 @@ bool CLSobject::Debug(const char *format, ...)
 	va_list argList;
 
 	va_start(argList, format);
+	pthread_mutex_lock(&printf_mutex);
 	vsprintf(m_buffer, format, argList);
 	printf("%s %s\n", GetTimeString(), m_buffer);
+	pthread_mutex_unlock(&printf_mutex);
 	va_end(argList);
 }
 //------------------------------------------------------------------------------
@@ -69,8 +85,10 @@ void CLSobject::Debug(int level, const char *format, ...)
 	va_start(argList, format);
 	if (CheckDebug(level))
 	{
+		pthread_mutex_lock(&printf_mutex);
 		vsprintf(m_buffer, format, argList);
 		printf("%s  %s\n", GetTimeString(), m_buffer);
+		pthread_mutex_unlock(&printf_mutex);
 	}
 	va_end(argList);
 }
@@ -82,8 +100,10 @@ void CLSobject::Debug(int target, int level, const char *format, ...)
 	va_start(argList, format);
 	if (CheckDebug(level, target))
 	{
+		pthread_mutex_lock(&printf_mutex);
 		vsprintf(m_buffer, format, argList);
 		printf("%s  %s\n", GetTimeString(), m_buffer);
+		pthread_mutex_unlock(&printf_mutex);
 	}
 	va_end(argList);
 }

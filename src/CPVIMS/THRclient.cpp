@@ -34,7 +34,17 @@ void TCLsigHandler(CLSequip *ptr, int sig)
 //------------------------------------------------------------------------------
 bool TCLinitNetwork(CLSequip *info)
 {
+	char name[SHORTBUF_LEN];
+	CLSthreadC *ptr = info->Thread;
 
+	// Create TCP
+	sprintf(name, "VIMSTCP%d", info->ID);
+	if ((info->TcpIF = new CLSvimsIF(name, 0, info->Socket, TCP_CHILD)) == NULL)
+	{
+		Log.Write("CLient TCP create fail");
+		return (false);
+	}
+	((CLSvimsIF *)info->TcpIF)->SetID(info->ID, info);
 }
 //------------------------------------------------------------------------------
 // TCLinitSignal
@@ -87,6 +97,8 @@ void TCLclearEnv(CLSequip *info)
 void *THRclient(void *data)
 {
 	bool initOK;
+	int id=0;
+	int cycle = 0;
 	CLSequip *info;
 	CLSthreadC *pThread = NULL;
 
@@ -94,16 +106,20 @@ void *THRclient(void *data)
 	info = (CLSequip *)data;
 	pThread = info->Thread;
 	initOK = TCLinitEnv(info);
-
+	id = info->ID;
 	Log.Write("THRclient log address %d ", Log);
 	// Main loop
 	while (initOK && !pThread->Terminate && !NeedTerminate())
-	{
-		Log.Debug("THRclient run##");
+	{	
 		pThread->MarkTime();
+		Log.Debug("##CL[%d] VIMS [%d]", id, cycle++);
+		// Client 통신 관리
+		if (!info->TcpIF->Manage())
+			break;
 
 		pThread->UpdateRunInfo();	// 실행 정보 갱신
 		pThread->Pause(1000);		// 10 msec
 	}
-	TCLclearEnv(info);			// 작업 환경 정리
+	// 작업 환경 정리
+	TCLclearEnv(info);
 }

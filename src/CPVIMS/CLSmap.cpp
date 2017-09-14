@@ -28,8 +28,11 @@ CLSmap::~CLSmap(void)
 bool CLSmap::Add(char *address, CLSequip *ptr)
 {
 	if (Client.insert(pair<string, CLSequip *>(address, ptr)).second == false)
+	{
+		Log.Write("Add fail [%s]", address);
 		return (false);
-
+	}
+	Log.Write("Add success [%s]", address);
 	return (true);
 }
 //------------------------------------------------------------------------------

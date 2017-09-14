@@ -192,9 +192,12 @@ bool CLStcp::Open(void)
 	int length = sizeof(struct sockaddr_in);
 	struct sockaddr_in server;
 
+	Debug("Socket open [1]");
+
 	// Open socket
 	if ((ID = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
 	{
+		Debug("Socket open fail");
 		return (false);
 	}
 
@@ -213,14 +216,16 @@ bool CLStcp::Open(void)
 	server.sin_addr.s_addr = htons(INADDR_ANY);
 	if (bind(ID, (struct sockaddr *)&server, length) < 0)
 	{
+		Debug("Socket bind fail port[%d]", m_port);
 		return (false);
 	}
 	// Listen
 	if (listen(ID, 10) < 0)
 	{
+		Debug("Socket listen fail");
 		return (false);
 	}
-
+	Debug("Socket open success[2]");
 	Initialized = true;
 	return (true);
 }

@@ -120,11 +120,16 @@ void CLSthreadC::Manage(void)
 	{
 		return;
 	}
+	//Debug("THR status [%d]", state);
 	// Thread 상태 복원
 	switch (state)
 	{
-	case RST_ABNOMAL: Kill();
-	case RST_UNEXIST: Start(); 
+	case RST_ABNOMAL: 
+		Debug("THR RST_ABNOMAL [%d]", state); 
+		Kill();
+	case RST_UNEXIST: 
+		Debug("THR RST_UNEXIST [%d]", state); 
+		Start();
 		break;
 	default: break;
 	}

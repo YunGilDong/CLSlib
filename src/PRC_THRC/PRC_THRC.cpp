@@ -65,7 +65,7 @@ bool NeedTerminate(void)
 {
 	if (!ShmPrc->IsActiveProcess(getpid()))
 	{	
-		Log.Write("pid err");
+		Log.Write("pid err [%d], [%d]", getpid(), ShmPrc->ID);
 		return (true);
 	}
 	if (Terminate)
@@ -93,12 +93,14 @@ void DeleteClientX(CLSprcthrc *pTHRC)
 //------------------------------------------------------------------------------
 void ManageThread(void)
 {
-	// THRclient.Manage();
+	ThrClient.Manage();
+	/*
 	CLSprcthrc *ptr;
 	MPCL_IT it;
 	RUN_STATE state;
 	CLSthreadC *pThread;
 
+	//Log.Debug("THRC threadManage[0]");
 	// Manage thread
 	for (it = Map.Client.begin(); it != Map.Client.end();)
 	{
@@ -111,16 +113,18 @@ void ManageThread(void)
 		}
 		//printf("ID:%d\n", ptr->ID);
 		pThread = ptr->Thread;
+		//Log.Debug("THRC threadManage[1]");
 		pThread->Manage();		// Manage thread
-		if (pThread != NULL && pThread->IsRunning(&state))
-			++it;
-		/*else
+		//if (pThread != NULL && pThread->IsRunning(&state))
+		//	++it;
+		*//*else
 		{
 			Log.Write("Map state abnormal [2]");
 			DeleteClientX(ptr);
 			Map.Client.erase(it++);
-		}*/
+		}*//*
 	}
+	*/
 }
 //------------------------------------------------------------------------------
 // ManageDebug
@@ -134,8 +138,12 @@ void ManageDebug(void)
 	Log.SetDebug(ShmPrc->ReqLevel, ShmPrc->ReqTarget);
 	ShmPrc->ChangeDebug = false;
 }
+//------------------------------------------------------------------------------
+// InitThread
+//------------------------------------------------------------------------------
 bool InitThread(void)
 {
+	/*
 	char name[SHORTBUF_LEN];
 	CLSprcthrc *dPtr;
 	Log.Write("InitThread [0]");
@@ -148,7 +156,7 @@ bool InitThread(void)
 	}
 	Log.Write("InitThread [1]");
 	Log.Write("GetDB:[%s][%d]", dPtr->Mng.address, dPtr->ID);
-	sprintf(name, "CL%04d", dPtr->ID);
+	sprintf(name, "PRCTHRC%02d", dPtr->ID);
 	if ((dPtr->Thread = new CLSthreadC(name, THRclient, dPtr)) == NULL)
 	{
 		Log.Write("Thread create fail [%s]", name);
@@ -168,8 +176,14 @@ bool InitThread(void)
 		Log.Write("Thread start fail [%s]", name);
 		return (false);
 	}
-	Log.Write("InitThread [4]");
+	Log.Write("InitThread [4] pid:",ShmPrc->ID);
 	dPtr->Active = true;
+	return(true);
+	*/
+	// Start client thread
+	if (!ThrClient.Start())
+		return(false);
+
 	return(true);
 }
 //------------------------------------------------------------------------------
@@ -194,7 +208,7 @@ bool InitPRCTHRC(void)
 
 	MPCL_IT it;
 	CLSprcthrc *ptr;
-	for (it = Map.Client.begin(); it != Map.Client.end();)
+	for (it = Map.m_dbase.begin(); it != Map.m_dbase.end(); it++)
 	{
 		ptr = it->second;
 		printf("ptr ID : %d\n", ptr->ID);
@@ -267,6 +281,7 @@ bool InitEnv(int argc, char **argv)
 	Log.Write("InitEnv success");	
 	InitDebug();	// Initialize dubgging infomation
 	ShmPrc->Register(getpid());
+	Log.Write("PROCESS register[%d][%d]", getpid(), ShmPrc->ID);
 	gettimeofday(&TMtimer, NULL);
 	return (true);
 }
@@ -297,7 +312,7 @@ int main(int argc, char **argv)
 		ManageThread();			// Thread 관리
 
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
-		ShmPrc->Pause(100);			// 100 msec
+		ShmPrc->Pause(1000);			// 100 msec
 	}
 
 	ClearEnv();	

@@ -188,6 +188,7 @@ public:
 	~CLSvimsIF(void);
 
 	bool Manage(void);
+	void SetID(int id, CLSequip *pEquip);
 };
 //------------------------------------------------------------------------------
 #endif // !CLSvimsIFH

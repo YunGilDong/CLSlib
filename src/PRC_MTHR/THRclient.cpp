@@ -99,7 +99,7 @@ void *THRclient(void *data)
 
 	while (initOK)
 	{
-		Log.Debug("#THRclient RUN#");
+		//Log.Debug("#THRclient RUN#");
 		pThread->MarkTime();
 
 		pThread->UpdateRunInfo();	// 실행 정보 갱신

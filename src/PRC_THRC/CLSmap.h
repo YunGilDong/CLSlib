@@ -29,9 +29,10 @@ typedef MAP_DB::iterator MPDB_IT;
 class CLSmap : public CLSobject
 {
 private:
-	MAP_DB m_dbase;
+	
 public:
 	MAP_CLIENT Client;
+	MAP_DB m_dbase;
 
 	CLSmap(void);
 	CLSmap(const char *name);

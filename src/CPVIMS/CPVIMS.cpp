@@ -111,7 +111,7 @@ void ManageThread(void)
 	MPCL_IT it;
 	RUN_STATE state;
 	CLSthreadC *pThread;
-
+		
 	// Manage server thread
 	ThrServer.Manage();
 
@@ -240,7 +240,7 @@ bool InitEquip(void)
 		//	continue;
 		ptr = it->second;
 
-		Log.Write("MAP EQUIP ID: %d", ptr->ID);
+		Log.Write("MAP EQUIP ipaddr: %s", ptr->Mng.address);
 	}
 }
 //------------------------------------------------------------------------------
@@ -344,7 +344,7 @@ int main(int argc, char **argv)
 		ManageThread();			// Thread 관리
 		
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
-		ShmPrc->Pause(100);			// 100 msec
+		ShmPrc->Pause(1000);			// 1000 msec
 	}
 	ClearEnv();
 }

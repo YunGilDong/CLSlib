@@ -22,7 +22,7 @@ void TSVclearEnv(void);
 // Global Variable
 //------------------------------------------------------------------------------
 // Local Variable
-int CallCnt = 1;
+CLStcp TcpServer("VIMSTCP", TCP_SERVER_PORT, "");
 //------------------------------------------------------------------------------
 // CLStcp TcpServer("EQUIPSVTCP","TCP_SERVER_PORT, "")'
 
@@ -50,24 +50,29 @@ bool TSVcreateClient(char *remoteIP)
 	char name[SHORTBUF_LEN];
 	CLSequip *cPtr, *dPtr;
 
+	Log.Debug("createClient IP:[%s]", remoteIP);
 	// 등록된 Equip 인지 확인
 	if ((dPtr = Map.GetDB(remoteIP)) == NULL)
 	{
 		Log.Write(1, "Undefined Equip ID access [%s]", remoteIP);
+		close(TcpServer.NewSocket);
 		return (false);
 	}
 	// 존재하는 Client확인
-	sprintf(name, "CL%d", dPtr->ID);
+	sprintf(name, "CLVM%d", dPtr->ID);
 	if ((cPtr = Map.Get(remoteIP)) != NULL)
 	{
 		Log.Write(1, "Client already exist [%s]", name);
+		close(TcpServer.NewSocket);
 		DeleteClient(cPtr, remoteIP);
 		return (false);
 	}
 	// Client thread create
+	dPtr->Socket = TcpServer.NewSocket;
 	if ((dPtr->Thread = new CLSthreadC(name, THRclient, dPtr)) == NULL)
 	{
 		Log.Write(1, "Client create fail [%s]", name);
+		close(TcpServer.NewSocket);
 		delete dPtr->Thread;
 		return (false);
 	}
@@ -92,15 +97,39 @@ bool TSVcreateClient(char *remoteIP)
 //------------------------------------------------------------------------------
 bool TSVmanage(void)
 {
+	bool newConnection;
+	char remoteIP[SHORTBUF_LEN];
+
+	if (!TcpServer.Accept(&newConnection, remoteIP))
+	{
+		Log.Debug("TSV accept fail");
+		Log.Write("TSV accept fail");
+		return (false);
+	}
+	if (!newConnection)
+		return (true);
+	if (!TSVcreateClient(remoteIP))
+		return (true);
+
+	return (true);
+}
+//------------------------------------------------------------------------------
+// TSVmanageTest
+//------------------------------------------------------------------------------
+bool TSVmanageTest(void)
+{
+	static int CallCnt = 0;
 	char * id1 = "192.168.10.202", *id2 = "192.168.10.200", *id3 = "192.168.10.204";
 	char * id4 = "192.168.10.205", *id5 = "192.168.10.201";
 	//id1 = 1000;	id2 = 1001; id3 = 1002; id4 = 1003; id5 = 1234;
-
+/*
+	++CallCnt;
+	if (CallCnt > 5) return (true);
 	if (CallCnt == 1)
 	{
 		if (TSVcreateClient(id1))
 		{
-			CallCnt++;
+			
 			return (true);
 		}
 	}
@@ -108,7 +137,7 @@ bool TSVmanage(void)
 	{
 		if (TSVcreateClient(id2))
 		{
-			CallCnt++;
+			
 			return (true);
 		}
 	}
@@ -116,7 +145,7 @@ bool TSVmanage(void)
 	{
 		if (TSVcreateClient(id3))
 		{
-			CallCnt++;
+			
 			return (true);
 		}
 	}
@@ -124,7 +153,7 @@ bool TSVmanage(void)
 	{
 		if (TSVcreateClient(id4))
 		{
-			CallCnt++;
+			
 			return (true);
 		}
 	}
@@ -132,10 +161,11 @@ bool TSVmanage(void)
 	{
 		if (TSVcreateClient(id5))
 		{
-			CallCnt++;
+			
 			return (true);
 		}
 	}
+	*/
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -143,6 +173,12 @@ bool TSVmanage(void)
 //------------------------------------------------------------------------------
 bool TSVinitNetwork(void)
 {
+	// open server socket
+	if (!TcpServer.Open())
+	{
+		return (false);
+	}
+
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -181,7 +217,11 @@ bool TSVinitEnv(void)
 
 	// Network초기화
 	if (!TSVinitNetwork())
+	{
+		Log.Debug("Server network initialization fail");
+		Log.Write("Server network initialization fail");
 		return (false);
+	}
 
 	return true;
 }
@@ -190,6 +230,7 @@ bool TSVinitEnv(void)
 //------------------------------------------------------------------------------
 void TSVclearEnv(void)
 {
+	TcpServer.Close();
 	ThrServer.Stop();	// Terminate thread
 }
 //------------------------------------------------------------------------------
@@ -198,6 +239,7 @@ void TSVclearEnv(void)
 void *THRserver(void *data)
 {
 	bool initOK;
+	int cycle = 0;
 	initOK = TSVinitEnv();	// 작업 환경 초기화
 
 	Log.Write("THRserver log address %d ", Log);
@@ -205,14 +247,16 @@ void *THRserver(void *data)
 	// Main loop
 	while (initOK && !ThrServer.Terminate && !NeedTerminate())
 	{
-		//Log.Debug("THRserver run##"); 
+		//Log.Debug("VIMS server run [%d]##", cycle++); 
 		ThrServer.MarkTime();
 
+		//if (!TSVmanageTest())
+		//	break;
 		if (!TSVmanage())
-			break;
+				break;
 
 		ThrServer.UpdateRunInfo();	// 실행 정보 갱신
-		ThrServer.Pause(1000);		// 10 msec
+		ThrServer.Pause(500);		// 500 msec
 	}
 	//TCLclearEnv();		// 작업 환경 정리
 }
