@@ -25,6 +25,7 @@ SHARED_MEM *ShmPtr = NULL;
 CLSsystem *ShmSys = NULL;
 CLSprocess *ShmPrc = NULL;
 struct timeval TMtimer;
+pthread_t MainThrId;
 
 CLSmemory ShmMemory(YGD_SHM_KEY, SHARED_MEM_SIZE, "SHM");
 CLSthreadC ThrServer("CPVIMSSV", THRserver);
@@ -51,7 +52,7 @@ void THRsigHandler(int sig)
 	pthread_t id = pthread_self();
 	CLSequip *ptr;
 	
-	Log.Write("Thread id [%d] sig [%d]", id, sig);
+	//Log.Write("Thread id [%d] sig [%d]", id, sig);
 	// Process server thread signal
 	if (id == ThrServer.ID)
 	{
@@ -67,10 +68,25 @@ void THRsigHandler(int sig)
 //------------------------------------------------------------------------------
 bool NeedTerminate(void)
 {
+	pthread_t thrid = pthread_self();
+
+	if (!ShmPrc->IsActiveProcess(getpid()))
+	{
+		Log.Write("IsActiveProcess [%d]", thrid);
+		return (true);
+	}
 	if (Terminate)
+	{
+		Log.Write("Terminate [%d]", thrid);
 		return (true);
+	}
 	if (ShmSys->Terminate)
+	{
+		//if (thrid != MainThrId)	
+		//	return (false);
+		Log.Write("ShmSys->Terminate [%d]", thrid);
 		return (true);
+	}		
 
 	return (false);
 }
@@ -126,7 +142,12 @@ void ManageThread(void)
 			continue;
 		}
 		pThread = ptr->Thread;
-		if (pThread != NULL && pThread->IsRunning(&state))
+		if(pThread == NULL)
+			Log.Write(1, "Thread is NUMM");
+		if (!(pThread->IsRunning(&state)))
+			Log.Write(1, "Thread is not running");
+
+		if ((pThread != NULL) && (pThread->IsRunning(&state)))
 			++it;
 		else
 		{
@@ -183,9 +204,10 @@ void InitDebug(void)
 bool InitThread(void)
 {
 	// Start server thread
-	if (!ThrServer.Start())
-		return (false);
-
+	//if (!ThrServer.Start())
+	//	return (false);
+		
+	//Log.Write("Server thread start");
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -193,28 +215,44 @@ bool InitThread(void)
 //------------------------------------------------------------------------------
 void TerminateThread(void)
 {
-	CLSequip *ptr;
+	CLSequip *ptr;	
+	MPCL_IT it;	
 	CLSthreadC *pThread;
-	MAP_CLIENT::iterator it;
 
+	pthread_t thrid = pthread_self();
+	
+
+	Log.Write("TerminateThread [0][%d]", thrid);
 	// Terminate client thread
 	for (it = Map.Client.begin(); it != Map.Client.end();)
 	{
 		if ((ptr = it->second) == NULL)
+		{
+			Log.Write("TerminateThread [1] [%d]", ptr->ID);
 			++it;
+		}
 		else if ((pThread = ptr->Thread) == NULL)
+		{
+			Log.Write("TerminateThread [2] [%d]", ptr->ID);
 			++it;
+		}
 		else if (pThread->IsExist())
+		{
+			Log.Write("TerminateThread [3] [%d]", ptr->ID);
 			pThread->Kill();
+		}
 		else
 		{
+			Log.Write("TerminateThread [4] [%d]", ptr->ID);
 			delete pThread;
 			ptr->Thread = NULL;
 			++it;
 		}
 	}
 	// Terminate server thread
+	Log.Write("TerminateThread [5]");
 	ThrServer.Kill();
+	Log.Write("TerminateThread [6]");
 }
 //------------------------------------------------------------------------------
 // InitEquip
@@ -333,7 +371,9 @@ int main(int argc, char **argv)
 
 	// 작업 환경 초기화
 	initOK = InitEnv(argc, argv);
-
+	Log.Write("Main start");
+	MainThrId = pthread_self();
+	Log.Write("Main Thread ID[%d]", MainThrId);
 	Log.Write("CPVIMS main log address %d ", Log);
 
 	//Main Loop
@@ -344,7 +384,8 @@ int main(int argc, char **argv)
 		ManageThread();			// Thread 관리
 		
 		ShmPrc->UpdateRunInfo();	// 실행 정보 갱신
-		ShmPrc->Pause(1000);			// 1000 msec
+		ShmPrc->Pause(100);			// 1000 msec
 	}
+	Log.Write("Main end");
 	ClearEnv();
 }

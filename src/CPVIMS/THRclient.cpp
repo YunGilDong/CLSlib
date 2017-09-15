@@ -87,9 +87,20 @@ bool TCLinitEnv(CLSequip *info)
 //------------------------------------------------------------------------------
 void TCLclearEnv(CLSequip *info)
 {
+	Log.Write("Client Thread clear %d [%d]", info->ID, info->Thread->ID);
+
+	// Close client Socket
+	if (info->TcpIF != NULL)
+	{
+		Log.Write("Socket Close");
+		info->TcpIF->Close();
+	}
 	// Terminate thread
 	if (info->Thread != NULL)
+	{
+		Log.Write("thread stop");
 		info->Thread->Stop();
+	}
 }
 //------------------------------------------------------------------------------
 // THRclient
@@ -107,18 +118,28 @@ void *THRclient(void *data)
 	pThread = info->Thread;
 	initOK = TCLinitEnv(info);
 	id = info->ID;
+
+	pthread_t thrid = pthread_self();
+	Log.Write("Client Thread ID[%d]", thrid);
+
+
 	Log.Write("THRclient log address %d ", Log);
 	// Main loop
 	while (initOK && !pThread->Terminate && !NeedTerminate())
 	{	
 		pThread->MarkTime();
-		Log.Debug("##CL[%d] VIMS [%d]", id, cycle++);
+		if ((++cycle) % 500 == 0)
+		{
+			Log.Write("##CLTHR[%d] VIMS [%d]", id, cycle);
+			Log.Debug("##CLTHR[%d] VIMS [%d]", id, cycle);
+			if (cycle == 100000000) cycle = 0;
+		}
 		// Client 통신 관리
-		if (!info->TcpIF->Manage())
-			break;
+		//if (!info->TcpIF->Manage())
+		//	break;
 
 		pThread->UpdateRunInfo();	// 실행 정보 갱신
-		pThread->Pause(1000);		// 10 msec
+		pThread->Pause(5);		// 500 msec
 	}
 	// 작업 환경 정리
 	TCLclearEnv(info);

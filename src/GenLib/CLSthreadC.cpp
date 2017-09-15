@@ -58,7 +58,10 @@ bool CLSthreadC::IsExist(void)
 {
 	// ID 확인
 	if (ID <= 0)
+	{
+		Debug("[IsExist] Thread ID:[%d]", ID);
 		return (false);
+	}
 
 	// Object 존재 상태 확인
 	if (pthread_kill(ID, 0) != 0) 
@@ -77,6 +80,7 @@ bool CLSthreadC::IsRunning(RUN_STATE *pState)
 	// Thread 존재 여부 확인
 	if (!IsExist())
 	{
+		Debug("Thread RST_UNEXIST");
 		*pState = RST_UNEXIST;
 		return (false);
 	}
@@ -85,6 +89,7 @@ bool CLSthreadC::IsRunning(RUN_STATE *pState)
 	{
 		if (!CheckRunInfo(pState))
 		{
+			Debug("Thread RST_ABNOMAL");
 			*pState = RST_ABNOMAL;
 			return (false);
 		}

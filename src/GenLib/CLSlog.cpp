@@ -7,12 +7,20 @@
 // Author: YGD
 // Filename : CLSlog.cpp
 // Content: Log
-//
+// History:		Date		By		Content
+//				----------	------	--------------------------------------------
+//				2017.04.11	YGD		First edition
+//				2017.09.15	YGD		Add Logging thread safe (보류_)
 //------------------------------------------------------------------------------
 // Include
 //------------------------------------------------------------------------------
 #pragma	hdrstop
 #include "CLSlog.h"
+#include <pthread.h>
+//------------------------------------------------------------------------------
+// Static
+//------------------------------------------------------------------------------
+//static pthread_mutex_t log_mutex;
 //------------------------------------------------------------------------------
 // CLSlog
 //------------------------------------------------------------------------------
@@ -39,6 +47,7 @@ void CLSlog::Logging(void)
 	char filename[FILENAME_LEN];
 	FILE *fp;
 
+	//pthread_mutex_lock(&log_mutex);
 	// 메시지 확인
 	if ((length = strlen(m_buffer)) <= 0)
 		return;		
@@ -51,6 +60,7 @@ void CLSlog::Logging(void)
 	fwrite(m_buffer, 1, length, fp);
 	//printf("length : %d\n", length);
 	fclose(fp);
+	//pthread_mutex_unlock(&log_mutex);
 }
 //------------------------------------------------------------------------------
 // FLdump
