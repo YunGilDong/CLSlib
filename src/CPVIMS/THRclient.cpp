@@ -45,6 +45,8 @@ bool TCLinitNetwork(CLSequip *info)
 		return (false);
 	}
 	((CLSvimsIF *)info->TcpIF)->SetID(info->ID, info);
+	Log.Write("CLient TCP create");
+	return (true);
 }
 //------------------------------------------------------------------------------
 // TCLinitSignal
@@ -79,6 +81,10 @@ bool TCLinitEnv(CLSequip *info)
 	// Signal 처리기 초기화
 	pthread_detach(pthread_self());
 	TCLinitSignal();
+
+	// Network 초기화
+	if (!TCLinitNetwork(info))
+		return (false);
 
 	return (true);
 }
@@ -135,8 +141,10 @@ void *THRclient(void *data)
 			if (cycle == 100000000) cycle = 0;
 		}
 		// Client 통신 관리
-		//if (!info->TcpIF->Manage())
-		//	break;
+		if (!info->TcpIF->Manage())
+		{		
+			break;
+		}
 
 		pThread->UpdateRunInfo();	// 실행 정보 갱신
 		pThread->Pause(5);		// 500 msec

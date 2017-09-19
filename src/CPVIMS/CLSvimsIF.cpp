@@ -348,9 +348,7 @@ bool CLSvimsIF::Manage(void)
 {
 	time(&m_curClock);		// 현재 시각 갱신
 	m_curTod = localtime(&m_curClock);
-
-	Log.Write("Client tcp manage");
-	Log.Debug("Client tcp manage");
+		
 							// Manage RX Timeout
 	if (!ManageTimeout())
 		return (true);

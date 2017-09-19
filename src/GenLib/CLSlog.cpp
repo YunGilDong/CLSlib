@@ -83,9 +83,9 @@ void CLSlog::FLdump(const char *stamp, char *data, int length, int maxLength)
 				sprintf(&m_buffer[pos], "\n");
 				Logging();
 			}
-			pos = sprintf(m_buffer, "	");
+			pos = sprintf(m_buffer, "    ");
 		}
-		pos += sprintf(&m_buffer[pos], "%02X", (BYTE)*data);
+		pos += sprintf(&m_buffer[pos], " %02X", (BYTE)*data);
 	}
 	if (pos)
 	{

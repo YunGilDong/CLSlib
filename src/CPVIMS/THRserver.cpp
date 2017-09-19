@@ -260,10 +260,10 @@ void *THRserver(void *data)
 		//Log.Debug("VIMS server run [%d]##", cycle++); 
 		ThrServer.MarkTime();
 
-		if (!TSVmanageTest())
-			break;
-		//if (!TSVmanage())
-		//		break;
+		//if (!TSVmanageTest())
+		//	break;
+		if (!TSVmanage())
+				break;
 
 		ThrServer.UpdateRunInfo();	// 실행 정보 갱신
 		ThrServer.Pause(5);		// 500 msec

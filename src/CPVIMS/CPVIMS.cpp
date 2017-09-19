@@ -69,12 +69,13 @@ void THRsigHandler(int sig)
 bool NeedTerminate(void)
 {
 	pthread_t thrid = pthread_self();
-
+	/*
 	if (!ShmPrc->IsActiveProcess(getpid()))
 	{
 		Log.Write("IsActiveProcess [%d]", thrid);
 		return (true);
 	}
+	*/
 	if (Terminate)
 	{
 		Log.Write("Terminate [%d]", thrid);
@@ -204,10 +205,10 @@ void InitDebug(void)
 bool InitThread(void)
 {
 	// Start server thread
-	//if (!ThrServer.Start())
-	//	return (false);
+	if (!ThrServer.Start())
+		return (false);
 		
-	//Log.Write("Server thread start");
+	Log.Write("Server thread start");
 	return (true);
 }
 //------------------------------------------------------------------------------
@@ -266,19 +267,17 @@ bool InitEquip(void)
 	// DB Map
 	for (int idx = 0; idx < ShmSys->Equip; idx++, pEquip++)
 	{
-		Log.Write("init DB %d", idx + 1);
-		Log.Write("init DB %d", pEquip->Mng.id);
+		Log.Write("init Map [%d]", pEquip->Mng.id);
 		Map.AddDB(pEquip->Mng.address, pEquip);
 	}
 	int i = 0;
 	for (it = Map.m_dbase.begin(); it != Map.m_dbase.end(); it++)
-	{
-		Log.Write("init get DB %d", i + 1);
+	{		
 		//if ((ptr = it->second) == NULL)
 		//	continue;
 		ptr = it->second;
 
-		Log.Write("MAP EQUIP ipaddr: %s", ptr->Mng.address);
+		Log.Write("MAP EQUIP ipaddr: %s[%d]", ptr->Mng.address, ptr->ID);
 	}
 }
 //------------------------------------------------------------------------------
