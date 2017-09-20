@@ -143,6 +143,7 @@ void *THRclient(void *data)
 		// Client 통신 관리
 		if (!info->TcpIF->Manage())
 		{		
+			Log.Write("##CLTHR TCP Mng false");
 			break;
 		}
 

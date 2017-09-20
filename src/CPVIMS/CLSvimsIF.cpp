@@ -120,7 +120,7 @@ bool CLSvimsIF::ManageRX(void)
 	if ((count = Read(buffer, VIMS_TCPBUF_LEN)) <= 0)
 	{
 		if (count < 0)
-			Log.Write(m_id, 1, "%s Abnomal read [%d]", m_stamp, errno);
+			Log.Write(1, "%s Abnomal read[%d] [%d] [%d]", m_stamp, count, errno, m_id);
 		return ((count < 0) ? false : true);
 	}
 	// Process packet
@@ -356,19 +356,24 @@ bool CLSvimsIF::Manage(void)
 	// Manage RX
 	if (!ManageRX())
 	{
-		Log.Write(m_id, 1, "%s RX fail", m_stamp);
+		//Log.Write(m_id, 1, "%s RX fail", m_stamp);
+		Log.Write(1, "%s RX fail[%d]", m_stamp, m_id);
 		Close();
 		return (false);
 	}
 	// Manage TX
 	if (!ManageTX())
 	{
-		Log.Write(m_id, 1, "%s TX fail", m_stamp);
+		//Log.Write(m_id, 1, "%s TX fail", m_stamp);
+		Log.Write(1, "%s TX fail[%d]", m_stamp, m_id);
 		Close();
 		return (false);
 	}
 	return (true);
 }
+//------------------------------------------------------------------------------
+// SetID
+//------------------------------------------------------------------------------
 void CLSvimsIF::SetID(int id, CLSequip *pEquip)
 {
 	m_id = id;
