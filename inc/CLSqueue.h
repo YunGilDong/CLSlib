@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#ifdef CLSqueueH
+#ifndef CLSqueueH
 #define CLSqueueH
 //------------------------------------------------------------------------------
 // Include 
@@ -18,7 +18,7 @@
 
 typedef struct
 {
-	logn type;
+	long type;
 	char text[MSGQUEUE_LEN];
 } MSG_BUFFER;
 //------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ typedef struct
 typedef struct
 {
 	key_t key;
-	char name[OBJECTNAME_LEN];
+	char name[OBJNAME_LEN];
 } MSG_DESC;
 
 #define MSG_DESC_SIZE	sizeof(MSG_DESC);
@@ -47,7 +47,7 @@ public:
 	~CLSqueue(void);
 
 	int Count(void);
-	bool Create(MSG_DESC *desc);
+	bool Create(MSG_DESC *pDesc);
 	bool Delete(void);
 	bool Open(MSG_DESC *desc);
 	int Recv(void *buffer, int length = MSGQUEUE_LEN);

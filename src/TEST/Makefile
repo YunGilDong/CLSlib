@@ -1,7 +1,7 @@
 #
 # Makefile
 #
-# Target: SIGTEST
+# Target: TEST
 #
 # Environment
 #
@@ -41,11 +41,13 @@ LIBS = -pthread -lSane -lYgd
 #
 # Object files
 #
-OBJS = SIGTEST.o
+#OBJS = msgQRcv.o
+OBJS = msgQSnd.o
 #
 # Target Process
 #
-TARGET = SIGTEST
+TARGET = msgQTEST
+#TARGET = msgQRcv
 #
 # Make the Executalbe Program
 #
@@ -57,5 +59,9 @@ $(TARGET) : $(OBJS)
 	#@rm -rf $(OBJS)
 	#@rm -rf core $(TARGET) $(OBJS)
 
+rcv	:
+	g++ $(CCOPTS) $(DEFINES) msgQRcv.cpp
+	$(LINK) msgQRcv.o $(LIBS) -o msgQRcv
+
 clean :
-	rm -rf $(TARGET) $(OBJS)
+	rm -rf $(TARGET) $(OBJS) msgQRcv.o msgQRcv

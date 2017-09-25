@@ -44,7 +44,7 @@ LIB_DEPS =
 #
 # Object files
 #
-OBJS = CLSobject.o CLStbObject.o CLSrunObject.o CLSmemory.o CLSprocess.o CLSthread.o CLSthreadC.o CLScomm.o CLStcp.o CLSlog.o CLSsystem.o
+OBJS = CLSobject.o CLStbObject.o CLSrunObject.o CLSmemory.o CLSprocess.o CLSthread.o CLSthreadC.o CLScomm.o CLStcp.o CLSlog.o CLSsystem.o CLSqueue.o
 #OBJS = CLStbObject.o CLSrunObject.o test.o
 #
 # Target Process
